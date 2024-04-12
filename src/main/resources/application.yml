@@ -1,0 +1,5 @@
+spring:
+  application:
+    name: e_commerce_backend
+server:
+  port: 8081
