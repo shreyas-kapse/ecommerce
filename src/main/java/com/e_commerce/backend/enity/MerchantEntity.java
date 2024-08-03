@@ -1,7 +1,9 @@
 package com.e_commerce.backend.enity;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Digits;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.*;
 
@@ -11,7 +13,7 @@ import lombok.*;
 @Builder
 @Entity
 @EqualsAndHashCode(callSuper = false)
-public class MerchantEntity extends DatabaseAduiting{
+public class MerchantEntity extends DatabaseAuditing {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -20,24 +22,24 @@ public class MerchantEntity extends DatabaseAduiting{
     @Size(max = 20, message = "Name can not be more than 20 characters")
     private String merchantName;
 
-    @NotBlank(message = "Merchant phone is required")
-    @Size(max = 10,message = "Phone number must be at most 10 digits")
+    @NotNull(message = "Merchant phone is required")
+    @Digits(integer = 10, fraction = 0, message = "Phone number must be at most 10 digits")
     private Long merchantPhoneNo;
 
     @NotBlank(message = "Company name is required")
-    @Size(max = 10, message = "Company name can be more than 20 characters")
+    @Size(max = 20, message = "Company name can be more than 20 characters")
     private String companyName;
 
     @NotBlank(message = "Office address is required")
     @Size(max = 30, message = "Office address must be at most 30 letters")
     private String officeAddress;
 
-    @NotBlank(message = "Pin code is required")
-    @Size(max = 10, message = "Pin code can not be more than 10 digits")
+    @NotNull(message = "Pin code is required")
+    @Digits(integer = 10, fraction = 0, message = "Pin code can not be more than 10 digits")
     private Long pinCode;
 
     @NotBlank(message = "City is required")
-    @Size(max = 10, message = "City name can not be more than 10 characters")
+    @Size(max = 15, message = "City name can not be more than 15 characters")
     private String city;
 
     @NotBlank(message = "State is required")
