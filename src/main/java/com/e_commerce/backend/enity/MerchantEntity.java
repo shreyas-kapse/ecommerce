@@ -13,9 +13,9 @@ import lombok.*;
 @Builder
 @Entity
 @EqualsAndHashCode(callSuper = false)
-public class MerchantEntity extends DatabaseAuditing {
+public class MerchantEntity {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
     @NotBlank(message = "Merchant name is required")
@@ -25,6 +25,10 @@ public class MerchantEntity extends DatabaseAuditing {
     @NotNull(message = "Merchant phone is required")
     @Digits(integer = 10, fraction = 0, message = "Phone number must be at most 10 digits")
     private Long merchantPhoneNo;
+
+    @NotBlank(message = "Email is required")
+    @Size(max = 25, message = "Email can not be more than 25 characters")
+    private String email;
 
     @NotBlank(message = "Company name is required")
     @Size(max = 20, message = "Company name can be more than 20 characters")
