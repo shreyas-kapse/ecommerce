@@ -6,6 +6,8 @@ import com.e_commerce.backend.enity.MerchantEntity;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
+
 @Service
 public class MerchantService implements IMerchantService {
 
@@ -31,5 +33,14 @@ public class MerchantService implements IMerchantService {
                 .success(true)
                 .message("Merchant added successfully")
                 .build();
+    }
+
+    @Override
+    public Object getMerchant(String email, String companyName) {
+        Optional<MerchantEntity> merchant = merchantRepository.findByEmail(email);
+        if(merchant.isPresent() && merchant.get().getCompanyName().equalsIgnoreCase(companyName)){
+            return merchant;
+        }
+        return DefaultResponse.builder().message("No merchant found").build();
     }
 }

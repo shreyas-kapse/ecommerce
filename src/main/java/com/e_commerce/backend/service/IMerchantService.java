@@ -5,4 +5,5 @@ import com.e_commerce.backend.enity.MerchantEntity;
 
 public interface IMerchantService {
     public DefaultResponse addMerchant(MerchantEntity merchant);
+    public Object getMerchant(String email, String companyName);
 }
