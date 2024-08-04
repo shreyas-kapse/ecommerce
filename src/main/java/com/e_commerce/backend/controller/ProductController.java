@@ -1,0 +1,44 @@
+package com.e_commerce.backend.controller;
+
+import com.e_commerce.backend.DefaultResponse;
+import com.e_commerce.backend.enity.ProductEntity;
+import com.e_commerce.backend.service.IProductService;
+import jakarta.validation.Valid;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Optional;
+
+@RestController
+@RequestMapping("/product")
+public class ProductController {
+
+    @Autowired
+    private IProductService productService;
+
+    @PostMapping("/add")
+    public ResponseEntity<DefaultResponse> addProduct(@Valid @RequestBody ProductEntity productEntity, @RequestParam(required = false) String email, BindingResult result){
+        if (result.hasErrors()) {
+            Map<String, String> error = new HashMap<>();
+            result.getFieldErrors().forEach(err ->
+                    error.put(err.getField(), err.getDefaultMessage())
+            );
+            DefaultResponse errorResponse = DefaultResponse.builder()
+                    .success(false)
+                    .message("Validation failed")
+                    .errors(Optional.of(error))
+                    .build();
+            return ResponseEntity.badRequest().body(errorResponse);
+        }
+        DefaultResponse response = productService.addProduct(productEntity, email);
+        if(!response.isSuccess()){
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
+        }
+        return ResponseEntity.ok(response);
+    }
+}
