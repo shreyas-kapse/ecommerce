@@ -7,6 +7,8 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.*;
 
+import java.util.List;
+
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -53,4 +55,7 @@ public class MerchantEntity {
     @NotBlank(message = "Country is required")
     @Size(max = 10, message = "Country name can not be more than 10 characters")
     private String country;
+
+    @OneToMany(mappedBy = "merchant")
+    private List<ProductEntity> products;
 }
