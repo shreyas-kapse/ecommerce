@@ -49,4 +49,8 @@ public class MerchantController {
        }
        return ResponseEntity.ok(object);
     }
+    @GetMapping("/")
+    public String test(){
+        return "Controller";
+    }
 }
