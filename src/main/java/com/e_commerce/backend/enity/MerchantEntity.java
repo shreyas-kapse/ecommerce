@@ -1,5 +1,6 @@
 package com.e_commerce.backend.enity;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Digits;
 import jakarta.validation.constraints.NotBlank;
@@ -57,5 +58,6 @@ public class MerchantEntity {
     private String country;
 
     @OneToMany(mappedBy = "merchant")
+    @JsonManagedReference
     private List<ProductEntity> products;
 }

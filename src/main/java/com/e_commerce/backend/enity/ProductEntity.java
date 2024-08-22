@@ -1,5 +1,6 @@
 package com.e_commerce.backend.enity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;
@@ -43,5 +44,6 @@ public class ProductEntity {
     private Boolean available;
 
     @ManyToOne
+    @JsonBackReference
     private MerchantEntity merchant;
 }
