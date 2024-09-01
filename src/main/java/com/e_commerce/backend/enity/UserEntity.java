@@ -3,14 +3,20 @@ package com.e_commerce.backend.enity;
 import com.e_commerce.backend.AccountStatus;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
-import org.hibernate.validator.constraints.Length;
+import lombok.NoArgsConstructor;
 
 @Entity
 @Data
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
 public class UserEntity {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
     @NotBlank(message = "user name is required")
@@ -25,15 +31,15 @@ public class UserEntity {
 
     private String lastName;
 
+    @Builder.Default
     @Column(name = "is_email_verified")
     private boolean isEmailVerified = false;
 
-    @Enumerated(EnumType.STRING)
-    private AccountStatus accountStatus;
+    private String accountStatus;
 
     @NotBlank(message = "Phone number is required")
-    @Length(min = 10, max = 10, message = "Invalid number")
-    private Long phoneNumber;
+    @Size(min = 10, max = 10, message = "Invalid number")
+    private String phoneNumber;
 
     private String addressLine1;
 
