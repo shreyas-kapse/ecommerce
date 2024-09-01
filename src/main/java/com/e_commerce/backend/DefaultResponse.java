@@ -17,6 +17,10 @@ import java.util.Optional;
 public class DefaultResponse {
     private boolean success;
     private String message;
+
     @Builder.Default
     private Optional<Map<String, String>> errors = Optional.empty();
+
+    @Builder.Default
+    private Optional<Map<String, String>> data = Optional.empty();
 }
