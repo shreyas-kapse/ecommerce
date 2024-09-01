@@ -1,5 +1,6 @@
 package com.e_commerce.backend.enity;
 
+import com.e_commerce.backend.AccountStatus;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Digits;
@@ -60,4 +61,6 @@ public class MerchantEntity {
     @OneToMany(mappedBy = "merchant")
     @JsonManagedReference
     private List<ProductEntity> products;
+
+    private AccountStatus accountStatus;
 }
