@@ -5,4 +5,6 @@ import com.e_commerce.backend.enity.UserEntity;
 
 public interface ILoginService {
     public DefaultResponse loginUser(UserEntity user);
+
+    public DefaultResponse registerUser(RegisterUserDTO registerUserDTO);
 }
