@@ -1,5 +1,6 @@
 package com.e_commerce.backend.enity;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import lombok.Data;
@@ -15,4 +16,7 @@ public class UserEntity {
     private String password;
 
     private String role;
+
+    @Column(name = "is_email_verified")
+    private boolean isEmailVerified = false;
 }
