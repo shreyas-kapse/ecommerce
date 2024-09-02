@@ -1,6 +1,7 @@
 package com.e_commerce.backend.service;
 
 import com.e_commerce.backend.DefaultResponse;
+import com.e_commerce.backend.ProductsDTO;
 import com.e_commerce.backend.Repository.MerchantRepository;
 import com.e_commerce.backend.Repository.ProductRepository;
 import com.e_commerce.backend.enity.MerchantEntity;
@@ -9,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -49,5 +51,36 @@ public class ProductService implements IProductService {
                     .httpStatus(Optional.of(HttpStatus.INTERNAL_SERVER_ERROR))
                     .build();
         }
+    }
+
+    @Override
+    public ProductsDTO getProductsByCompanyName(String companyName) {
+        Optional<MerchantEntity> merchant = merchantRepository.findByCompanyName(companyName);
+        if (merchant.isEmpty()) {
+            return ProductsDTO.builder()
+                    .response(DefaultResponse.builder()
+                            .success(false)
+                            .message("No company found")
+                            .httpStatus(Optional.of(HttpStatus.NOT_FOUND))
+                            .build())
+                    .build();
+        }
+        Optional<List<ProductEntity>> products = productRepository.findAllByMerchantId(merchant.get().getId());
+        if (products.isEmpty()) {
+            return ProductsDTO.builder()
+                    .response(DefaultResponse.builder()
+                            .success(false)
+                            .httpStatus(Optional.of(HttpStatus.NOT_FOUND))
+                            .message("No products found")
+                            .build())
+                    .build();
+        }
+        return ProductsDTO.builder()
+                .response(DefaultResponse.builder()
+                        .success(true)
+                        .build())
+                .products(Optional.of(products.get()))
+                .totalProducts(Optional.of(products.get().size()))
+                .build();
     }
 }

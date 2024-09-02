@@ -1,9 +1,9 @@
 package com.e_commerce.backend.controller;
 
 import com.e_commerce.backend.DefaultResponse;
+import com.e_commerce.backend.ProductsDTO;
 import com.e_commerce.backend.enity.ProductEntity;
 import com.e_commerce.backend.service.IProductService;
-import com.e_commerce.backend.service.JwtService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -53,5 +53,14 @@ public class ProductController {
             return ResponseEntity.status(response.getHttpStatus().get()).body(response);
         }
         return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/{companyName}")
+    public ResponseEntity<ProductsDTO> getProductsByCompanyName(@PathVariable String companyName) {
+        ProductsDTO productsDTO = productService.getProductsByCompanyName(companyName);
+        if (!productsDTO.getResponse().isSuccess()) {
+            return ResponseEntity.status(productsDTO.getResponse().getHttpStatus().get()).body(productsDTO);
+        }
+        return ResponseEntity.ok(productsDTO);
     }
 }

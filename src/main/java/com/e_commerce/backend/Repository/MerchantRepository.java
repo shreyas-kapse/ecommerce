@@ -10,4 +10,6 @@ import java.util.Optional;
 public interface MerchantRepository extends JpaRepository<MerchantEntity,Long> {
     Optional<MerchantEntity> findByMerchantPhoneNo(Long merchantPhoneNo);
     Optional<MerchantEntity> findByEmail(String email);
+
+    Optional<MerchantEntity> findByCompanyName(String companyName);
 }
