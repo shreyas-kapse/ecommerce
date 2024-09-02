@@ -3,9 +3,9 @@ package com.e_commerce.backend.controller;
 import com.e_commerce.backend.DefaultResponse;
 import com.e_commerce.backend.enity.ProductEntity;
 import com.e_commerce.backend.service.IProductService;
+import com.e_commerce.backend.service.JwtService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
@@ -22,7 +22,7 @@ public class ProductController {
     private IProductService productService;
 
     @PostMapping("/add")
-    public ResponseEntity<DefaultResponse> addProduct(@Valid @RequestBody ProductEntity productEntity, @RequestParam(required = false) String email, BindingResult result){
+    public ResponseEntity<DefaultResponse> addProduct(@Valid @RequestBody ProductEntity productEntity, BindingResult result, @RequestHeader("Authorization") String authorizationHeader) {
         if (result.hasErrors()) {
             Map<String, String> error = new HashMap<>();
             result.getFieldErrors().forEach(err ->
@@ -35,9 +35,22 @@ public class ProductController {
                     .build();
             return ResponseEntity.badRequest().body(errorResponse);
         }
-        DefaultResponse response = productService.addProduct(productEntity, email);
-        if(!response.isSuccess()){
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
+        String token = "";
+        if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
+            token = authorizationHeader.substring(7);
+        }
+        if (token.isEmpty()) {
+            DefaultResponse errorResponse = DefaultResponse.builder()
+                    .success(false)
+                    .message("Error in session please login")
+                    .build();
+            return ResponseEntity.internalServerError().body(errorResponse);
+        }
+
+        DefaultResponse response = productService.addProduct(productEntity, token);
+
+        if (!response.isSuccess()) {
+            return ResponseEntity.status(response.getHttpStatus().get()).body(response);
         }
         return ResponseEntity.ok(response);
     }
