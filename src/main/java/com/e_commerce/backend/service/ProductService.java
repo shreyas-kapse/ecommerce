@@ -6,12 +6,13 @@ import com.e_commerce.backend.Repository.ProductRepository;
 import com.e_commerce.backend.enity.MerchantEntity;
 import com.e_commerce.backend.enity.ProductEntity;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
 
 @Service
-public class ProductService implements IProductService{
+public class ProductService implements IProductService {
 
     @Autowired
     private ProductRepository productRepository;
@@ -19,23 +20,34 @@ public class ProductService implements IProductService{
     @Autowired
     private MerchantRepository merchantRepository;
 
+    @Autowired
+    private JwtService jwtService;
+
     @Override
-    public DefaultResponse addProduct(ProductEntity productEntity, String email) {
-        Optional<MerchantEntity> merchant = merchantRepository.findByEmail(email);
-        if(!merchant.isPresent()){
-            DefaultResponse errorResponse = DefaultResponse.builder()
-                    .success(false)
-                    .message("Merchant not found")
+    public DefaultResponse addProduct(ProductEntity productEntity, String token) {
+        try {
+            String email = jwtService.extractUserName(token);
+            Optional<MerchantEntity> merchant = merchantRepository.findByEmail(email);
+            if (merchant.isEmpty()) {
+                return DefaultResponse.builder()
+                        .success(false)
+                        .message("Merchant not found")
+                        .httpStatus(Optional.of(HttpStatus.NOT_FOUND))
+                        .build();
+            }
+            MerchantEntity merchantEntity = merchant.get();
+            productEntity.setMerchant(merchantEntity);
+            productRepository.save(productEntity);
+            return DefaultResponse.builder()
+                    .success(true)
+                    .message("Product added successfully")
                     .build();
-            return errorResponse;
+        } catch (Exception exception) {
+            return DefaultResponse.builder()
+                    .success(false)
+                    .message("Error occurred while adding new product")
+                    .httpStatus(Optional.of(HttpStatus.INTERNAL_SERVER_ERROR))
+                    .build();
         }
-        MerchantEntity merchantEntity = merchant.get();
-        productEntity.setMerchant(merchantEntity);
-        productRepository.save(productEntity);
-        DefaultResponse response = DefaultResponse.builder()
-                .success(true)
-                .message("Product added successfully")
-                .build();
-        return response;
     }
 }
