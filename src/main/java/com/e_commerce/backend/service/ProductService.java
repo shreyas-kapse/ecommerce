@@ -54,7 +54,7 @@ public class ProductService implements IProductService {
     }
 
     @Override
-    public ProductsDTO getProductsByCompanyName(String companyName) {
+    public ProductsDTO getProductsByMerchantName(String companyName) {
         Optional<MerchantEntity> merchant = merchantRepository.findByCompanyName(companyName);
         if (merchant.isEmpty()) {
             return ProductsDTO.builder()

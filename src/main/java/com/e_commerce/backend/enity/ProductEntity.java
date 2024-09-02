@@ -46,4 +46,6 @@ public class ProductEntity {
     @ManyToOne
     @JsonBackReference
     private MerchantEntity merchant;
+
+    private String description;
 }

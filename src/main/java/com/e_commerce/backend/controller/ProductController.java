@@ -56,8 +56,8 @@ public class ProductController {
     }
 
     @GetMapping("/{companyName}")
-    public ResponseEntity<ProductsDTO> getProductsByCompanyName(@PathVariable String companyName) {
-        ProductsDTO productsDTO = productService.getProductsByCompanyName(companyName);
+    public ResponseEntity<ProductsDTO> getProductsByMerchantName(@PathVariable String companyName) {
+        ProductsDTO productsDTO = productService.getProductsByMerchantName(companyName);
         if (!productsDTO.getResponse().isSuccess()) {
             return ResponseEntity.status(productsDTO.getResponse().getHttpStatus().get()).body(productsDTO);
         }

@@ -7,5 +7,5 @@ import com.e_commerce.backend.enity.ProductEntity;
 public interface IProductService {
     public DefaultResponse addProduct(ProductEntity productEntity, String token);
 
-    ProductsDTO getProductsByCompanyName(String companyName);
+    ProductsDTO getProductsByMerchantName(String companyName);
 }
