@@ -20,8 +20,8 @@ public class ProductEntity {
     private Long id;
 
     @NotBlank(message = "Product name can not be blank")
-    @Size(max = 15, min = 3, message = "Product name can not be more than 15 characters")
-    private String ProductName;
+    @Size(max = 15, min = 3, message = "Product name can not be less than 3 and more than 15 characters")
+    private String productName;
 
     @NotNull(message = "Product price can not be null")
     @Digits(integer = 7, fraction = 2)
