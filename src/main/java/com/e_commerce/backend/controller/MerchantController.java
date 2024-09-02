@@ -38,7 +38,11 @@ public class MerchantController {
                     .build();
             return ResponseEntity.badRequest().body(errorResponse);
         }
-        return ResponseEntity.ok(merchantService.addMerchant(merchant));
+        DefaultResponse response =  merchantService.addMerchant(merchant);
+        if(response.isSuccess()){
+            return ResponseEntity.ok(response);
+        }
+        return ResponseEntity.badRequest().body(response);
     }
 
     @GetMapping("/{companyName}")
