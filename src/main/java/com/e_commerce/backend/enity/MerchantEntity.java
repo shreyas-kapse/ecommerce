@@ -22,9 +22,13 @@ public class MerchantEntity {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
-    @NotBlank(message = "Merchant name is required")
-    @Size(max = 20, message = "Name can not be more than 20 characters")
-    private String merchantName;
+    @NotBlank(message = "Merchant first name is required")
+    @Size(max = 20, message = "First name can not be more than 20 characters")
+    private String firstName;
+
+    @NotBlank(message = "Merchant last name is required")
+    @Size(max = 20, message = "last name can not be more than 20 characters")
+    private String lastName;
 
     @NotNull(message = "Merchant phone is required")
     @Digits(integer = 10, fraction = 0, message = "Phone number must be at most 10 digits")
@@ -62,5 +66,5 @@ public class MerchantEntity {
     @JsonManagedReference
     private List<ProductEntity> products;
 
-    private AccountStatus accountStatus;
+    private String accountStatus;
 }
