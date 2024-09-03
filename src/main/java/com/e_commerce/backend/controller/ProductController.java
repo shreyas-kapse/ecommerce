@@ -72,4 +72,13 @@ public class ProductController {
         }
         return ResponseEntity.ok(productsDTO);
     }
+
+    @GetMapping("/category/{categoryName}")
+    public ResponseEntity<ProductsDTO> getProductsByCategoryName(@PathVariable String categoryName) {
+        ProductsDTO productsDTO = productService.getProductsByCategoryName(categoryName);
+        if (!productsDTO.getResponse().isSuccess()) {
+            return ResponseEntity.status(productsDTO.getResponse().getHttpStatus().get()).body(productsDTO);
+        }
+        return ResponseEntity.ok(productsDTO);
+    }
 }
