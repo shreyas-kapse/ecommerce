@@ -34,7 +34,7 @@ public class ProductService implements IProductService {
                 return DefaultResponse.builder()
                         .success(false)
                         .message("Merchant not found")
-                        .httpStatus(Optional.of(HttpStatus.NOT_FOUND))
+                        .httpStatus(Optional.of(HttpStatus.NO_CONTENT))
                         .build();
             }
             MerchantEntity merchantEntity = merchant.get();
@@ -61,7 +61,7 @@ public class ProductService implements IProductService {
                     .response(DefaultResponse.builder()
                             .success(false)
                             .message("No company found")
-                            .httpStatus(Optional.of(HttpStatus.NOT_FOUND))
+                            .httpStatus(Optional.of(HttpStatus.NO_CONTENT))
                             .build())
                     .build();
         }
@@ -70,7 +70,7 @@ public class ProductService implements IProductService {
             return ProductsDTO.builder()
                     .response(DefaultResponse.builder()
                             .success(false)
-                            .httpStatus(Optional.of(HttpStatus.NOT_FOUND))
+                            .httpStatus(Optional.of(HttpStatus.NO_CONTENT))
                             .message("No products found")
                             .build())
                     .build();
@@ -93,7 +93,39 @@ public class ProductService implements IProductService {
                         .response(DefaultResponse.builder()
                                 .success(false)
                                 .message("No products found")
-                                .httpStatus(Optional.of(HttpStatus.NOT_FOUND))
+                                .httpStatus(Optional.of(HttpStatus.NO_CONTENT))
+                                .build())
+                        .build();
+            }
+            return ProductsDTO.builder()
+                    .totalProducts(Optional.of(products.get().size()))
+                    .products(Optional.of(products.get()))
+                    .response(DefaultResponse.builder()
+                            .success(true)
+                            .httpStatus(Optional.of(HttpStatus.OK))
+                            .build())
+                    .build();
+        } catch (Exception e) {
+            return ProductsDTO.builder()
+                    .response(DefaultResponse.builder()
+                            .success(false)
+                            .message("Error occurred while fetching the records")
+                            .httpStatus(Optional.of(HttpStatus.INTERNAL_SERVER_ERROR))
+                            .build())
+                    .build();
+        }
+    }
+
+    @Override
+    public ProductsDTO getProductsByCategoryName(String categoryName) {
+        try {
+            Optional<List<ProductEntity>> products = productRepository.findAllByCategory(categoryName);
+            if (products.get().isEmpty()) {
+                return ProductsDTO.builder()
+                        .response(DefaultResponse.builder()
+                                .success(false)
+                                .message("No products found")
+                                .httpStatus(Optional.of(HttpStatus.NO_CONTENT))
                                 .build())
                         .build();
             }

@@ -10,4 +10,6 @@ public interface IProductService {
     ProductsDTO getProductsByMerchantName(String companyName);
 
     ProductsDTO getProductsByBrandName(String companyName);
+
+    ProductsDTO getProductsByCategoryName(String categoryName);
 }
