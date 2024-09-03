@@ -8,4 +8,6 @@ public interface IProductService {
     public DefaultResponse addProduct(ProductEntity productEntity, String token);
 
     ProductsDTO getProductsByMerchantName(String companyName);
+
+    ProductsDTO getProductsByBrandName(String companyName);
 }

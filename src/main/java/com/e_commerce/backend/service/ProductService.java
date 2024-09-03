@@ -54,8 +54,8 @@ public class ProductService implements IProductService {
     }
 
     @Override
-    public ProductsDTO getProductsByMerchantName(String companyName) {
-        Optional<MerchantEntity> merchant = merchantRepository.findByCompanyName(companyName);
+    public ProductsDTO getProductsByMerchantName(String merchantName) {
+        Optional<MerchantEntity> merchant = merchantRepository.findByCompanyName(merchantName);
         if (merchant.isEmpty()) {
             return ProductsDTO.builder()
                     .response(DefaultResponse.builder()
@@ -82,5 +82,37 @@ public class ProductService implements IProductService {
                 .products(Optional.of(products.get()))
                 .totalProducts(Optional.of(products.get().size()))
                 .build();
+    }
+
+    @Override
+    public ProductsDTO getProductsByBrandName(String brandName) {
+        try {
+            Optional<List<ProductEntity>> products = productRepository.findAllByBrand(brandName);
+            if (products.get().isEmpty()) {
+                return ProductsDTO.builder()
+                        .response(DefaultResponse.builder()
+                                .success(false)
+                                .message("No products found")
+                                .httpStatus(Optional.of(HttpStatus.NOT_FOUND))
+                                .build())
+                        .build();
+            }
+            return ProductsDTO.builder()
+                    .totalProducts(Optional.of(products.get().size()))
+                    .products(Optional.of(products.get()))
+                    .response(DefaultResponse.builder()
+                            .success(true)
+                            .httpStatus(Optional.of(HttpStatus.OK))
+                            .build())
+                    .build();
+        } catch (Exception e) {
+            return ProductsDTO.builder()
+                    .response(DefaultResponse.builder()
+                            .success(false)
+                            .message("Error occurred while fetching the records")
+                            .httpStatus(Optional.of(HttpStatus.INTERNAL_SERVER_ERROR))
+                            .build())
+                    .build();
+        }
     }
 }

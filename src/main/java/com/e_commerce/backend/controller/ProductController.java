@@ -55,9 +55,18 @@ public class ProductController {
         return ResponseEntity.ok(response);
     }
 
-    @GetMapping("/{companyName}")
-    public ResponseEntity<ProductsDTO> getProductsByMerchantName(@PathVariable String companyName) {
-        ProductsDTO productsDTO = productService.getProductsByMerchantName(companyName);
+    @GetMapping("/merchant/{merchantName}")
+    public ResponseEntity<ProductsDTO> getProductsByMerchantName(@PathVariable String merchantName) {
+        ProductsDTO productsDTO = productService.getProductsByMerchantName(merchantName);
+        if (!productsDTO.getResponse().isSuccess()) {
+            return ResponseEntity.status(productsDTO.getResponse().getHttpStatus().get()).body(productsDTO);
+        }
+        return ResponseEntity.ok(productsDTO);
+    }
+
+    @GetMapping("/brand/{brand}")
+    public ResponseEntity<ProductsDTO> getProductsByBrandName(@PathVariable String brand) {
+        ProductsDTO productsDTO = productService.getProductsByBrandName(brand);
         if (!productsDTO.getResponse().isSuccess()) {
             return ResponseEntity.status(productsDTO.getResponse().getHttpStatus().get()).body(productsDTO);
         }
