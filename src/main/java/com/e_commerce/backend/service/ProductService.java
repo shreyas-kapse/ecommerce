@@ -147,4 +147,35 @@ public class ProductService implements IProductService {
                     .build();
         }
     }
+
+    @Override
+    public ProductsDTO getProductById(String id) {
+        try {
+            Optional<ProductEntity> product = productRepository.findById(Long.valueOf(id));
+            if (product.isEmpty()) {
+                return ProductsDTO.builder()
+                        .response(DefaultResponse.builder()
+                                .success(false)
+                                .message("No product found")
+                                .httpStatus(Optional.of(HttpStatus.NO_CONTENT))
+                                .build())
+                        .build();
+            }
+            return ProductsDTO.builder()
+                    .products(Optional.of(List.of(product.get())))
+                    .response(DefaultResponse.builder()
+                            .success(true)
+                            .httpStatus(Optional.of(HttpStatus.OK))
+                            .build())
+                    .build();
+        } catch (Exception e) {
+            return ProductsDTO.builder()
+                    .response(DefaultResponse.builder()
+                            .success(false)
+                            .message("Error occurred while fetching the record")
+                            .httpStatus(Optional.of(HttpStatus.INTERNAL_SERVER_ERROR))
+                            .build())
+                    .build();
+        }
+    }
 }

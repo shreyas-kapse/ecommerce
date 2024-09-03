@@ -81,4 +81,14 @@ public class ProductController {
         }
         return ResponseEntity.ok(productsDTO);
     }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<ProductsDTO> getProductsById(@PathVariable String id) {
+        ProductsDTO productsDTO = productService.getProductById(id);
+        if (!productsDTO.getResponse().isSuccess()) {
+            return ResponseEntity.status(productsDTO.getResponse().getHttpStatus().get()).body(productsDTO);
+        }
+        return ResponseEntity.ok(productsDTO);
+    }
+
 }
