@@ -49,7 +49,7 @@ public class MerchantController {
     public ResponseEntity<Object> getMerchant(@RequestParam(required = false) String email,@PathVariable String companyName){
        Object object = merchantService.getMerchant(email,companyName);
        if(object.getClass()== DefaultResponse.class){
-          return ResponseEntity.status(HttpStatus.NOT_FOUND).body(object);
+          return ResponseEntity.status(HttpStatus.NO_CONTENT).body(object);
        }
        return ResponseEntity.ok(object);
     }
