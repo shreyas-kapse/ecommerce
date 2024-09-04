@@ -1,9 +1,12 @@
 package com.e_commerce.backend.service;
 
+import com.e_commerce.backend.Repository.UserRepository;
+import com.e_commerce.backend.enity.UserEntity;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
@@ -19,7 +22,10 @@ import java.util.function.Function;
 @Service
 public class JwtService {
 
-    private  String SECRET_KEY;
+    private String SECRET_KEY;
+
+    @Autowired
+    private UserRepository userRepository;
 
     public JwtService() {
         try {
@@ -32,15 +38,29 @@ public class JwtService {
     }
 
     public String generateToken(String username) {
-        Map<String,Object> claims= new HashMap<>();
-        claims.put("laptop","DELL");
+        Map<String, Object> claims = new HashMap<>();
+        UserEntity user = userRepository.findByUsername(username);
+
+        claims.put("username", user.getUsername());
+        claims.put("firstName", user.getFirstName());
+        claims.put("lastName", user.getLastName());
+        claims.put("phoneNumber", user.getPhoneNumber());
+        claims.put("role", user.getRole());
+        claims.put("isEmailVerified", user.isEmailVerified());
+        claims.put("accountStatus", user.getAccountStatus());
+        claims.put("addressLine1", user.getAddressLine1());
+        claims.put("addressLine2", user.getAddressLine2());
+        claims.put("city", user.getCity());
+        claims.put("state", user.getState());
+        claims.put("postalCode", user.getPostalCode());
+        claims.put("country", user.getCountry());
 
         return Jwts.builder()
                 .claims()
                 .add(claims)
                 .subject(username)
                 .issuedAt(new Date(System.currentTimeMillis()))
-                .expiration(new Date(System.currentTimeMillis()+60*60*500))
+                .expiration(new Date(System.currentTimeMillis() + 60 * 60 * 500))
                 .and()
                 .signWith(getKey())
                 .compact();
@@ -48,7 +68,7 @@ public class JwtService {
     }
 
     private SecretKey getKey() {
-        byte [] keyBytes = Decoders.BASE64.decode(SECRET_KEY);
+        byte[] keyBytes = Decoders.BASE64.decode(SECRET_KEY);
         return Keys.hmacShaKeyFor(keyBytes);
     }
 
