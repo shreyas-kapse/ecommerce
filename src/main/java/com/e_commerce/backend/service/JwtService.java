@@ -41,6 +41,7 @@ public class JwtService {
         Map<String, Object> claims = new HashMap<>();
         UserEntity user = userRepository.findByUsername(username);
 
+        claims.put("id", user.getId());
         claims.put("username", user.getUsername());
         claims.put("firstName", user.getFirstName());
         claims.put("lastName", user.getLastName());
@@ -103,4 +104,8 @@ public class JwtService {
         return extractClaim(token, Claims::getExpiration);
     }
 
+    public Object extractId(String token) {
+        Claims claims = extractAllClaims(token);
+        return claims.get("id");
+    }
 }
