@@ -46,7 +46,7 @@ public class CartService implements ICartService {
 
             Optional<ProductEntity> product = productRepository.findById(productId);
 
-            if(product.isEmpty()){
+            if (product.isEmpty()) {
                 return DefaultResponse.builder()
                         .success(false)
                         .message("Product not found")
@@ -86,6 +86,31 @@ public class CartService implements ICartService {
             return DefaultResponse.builder()
                     .success(false)
                     .message("Error occurred while adding product")
+                    .httpStatus(Optional.of(HttpStatus.INTERNAL_SERVER_ERROR))
+                    .build();
+        }
+    }
+
+    @Override
+    public DefaultResponse removeProductFromCart(Long productId, String token) {
+        try {
+            Object userIdObject = jwtService.extractId(token);
+
+            Optional<CartEntity> cartEntityOptional = cartRepository.findByUserId(Long.valueOf(userIdObject.toString()));
+            CartEntity cart;
+
+            cart = cartEntityOptional.orElseGet(() -> createNewCart(Long.valueOf(userIdObject.toString())));
+            cart.getCartItems().removeIf(item -> item.getProduct().getId().equals(productId));
+            cartRepository.save(cart);
+            return DefaultResponse.builder()
+                    .success(true)
+                    .message("Product removed successfully")
+                    .httpStatus(Optional.of(HttpStatus.NO_CONTENT))
+                    .build();
+        } catch (Exception e) {
+            return DefaultResponse.builder()
+                    .success(false)
+                    .message("Error occurred while removing product")
                     .httpStatus(Optional.of(HttpStatus.INTERNAL_SERVER_ERROR))
                     .build();
         }
