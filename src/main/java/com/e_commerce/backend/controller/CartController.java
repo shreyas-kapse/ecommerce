@@ -53,4 +53,24 @@ public class CartController {
         }
         return ResponseEntity.ok(response);
     }
+
+    @DeleteMapping("/clear")
+    public ResponseEntity<DefaultResponse> clearCart(@RequestHeader("Authorization") String authorizationHeader) {
+        String token = "";
+        if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
+            token = authorizationHeader.substring(7);
+        }
+        if (token.isEmpty()) {
+            DefaultResponse errorResponse = DefaultResponse.builder()
+                    .success(false)
+                    .message("Error in session please login")
+                    .build();
+            return ResponseEntity.internalServerError().body(errorResponse);
+        }
+        DefaultResponse response = cartService.clearCart(token);
+        if (!response.isSuccess()) {
+            return ResponseEntity.status(response.getHttpStatus().get()).body(response);
+        }
+        return ResponseEntity.ok(response);
+    }
 }
