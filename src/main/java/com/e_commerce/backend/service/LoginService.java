@@ -2,6 +2,7 @@ package com.e_commerce.backend.service;
 
 import com.e_commerce.backend.AccountStatus;
 import com.e_commerce.backend.DefaultResponse;
+import com.e_commerce.backend.EmailService;
 import com.e_commerce.backend.Repository.UserRepository;
 import com.e_commerce.backend.Role;
 import com.e_commerce.backend.enity.UserEntity;
@@ -29,6 +30,9 @@ public class LoginService implements ILoginService {
     @Autowired
     private UserRepository userRepository;
 
+    @Autowired
+    private EmailService emailService;
+
     @Override
     public DefaultResponse loginUser(UserEntity user) {
         try {
@@ -39,6 +43,7 @@ public class LoginService implements ILoginService {
                 Map<String, String> data = new HashMap<>();
                 data.put("token", jwtService.generateToken(user.getUsername()));
 
+                emailService.sendMail("test@yopmail.com","New login request","New login request detected","");
                 return DefaultResponse.builder()
                         .success(true)
                         .data(Optional.of(data))
