@@ -6,4 +6,6 @@ public interface ICartService {
     DefaultResponse addProductToCart(Long productId, int quantity, String token);
 
     DefaultResponse removeProductFromCart(Long productId, String token);
+
+    DefaultResponse clearCart(String token);
 }

@@ -116,6 +116,33 @@ public class CartService implements ICartService {
         }
     }
 
+    @Override
+    public DefaultResponse clearCart(String token) {
+        try {
+            Object userIdObject = jwtService.extractId(token);
+
+            Optional<CartEntity> cartEntityOptional = cartRepository.findByUserId(Long.valueOf(userIdObject.toString()));
+            CartEntity cart;
+
+            cart = cartEntityOptional.orElseGet(() -> createNewCart(Long.valueOf(userIdObject.toString())));
+            cart.getCartItems().clear();
+            cartRepository.save(cart);
+
+            return DefaultResponse.builder()
+                    .success(true)
+                    .message("Cart cleared successfully")
+                    .httpStatus(Optional.of(HttpStatus.NO_CONTENT))
+                    .build();
+
+        } catch (Exception e) {
+            return DefaultResponse.builder()
+                    .success(false)
+                    .message("Error occurred while clearing the cart")
+                    .httpStatus(Optional.of(HttpStatus.INTERNAL_SERVER_ERROR))
+                    .build();
+        }
+    }
+
     private CartEntity createNewCart(Long userId) {
         CartEntity cart = new CartEntity();
         Optional<UserEntity> user = userRepository.findById(userId);
