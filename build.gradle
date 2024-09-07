@@ -34,6 +34,7 @@ dependencies {
     runtimeOnly group: 'io.jsonwebtoken', name: 'jjwt-impl', version: '0.12.6'
     runtimeOnly group: 'io.jsonwebtoken', name: 'jjwt-jackson', version: '0.12.5'
     implementation group: 'org.springframework.boot', name: 'spring-boot-devtools', version: '3.3.3'
+    implementation group: 'org.springframework.boot', name: 'spring-boot-starter-mail', version: '3.3.2'
 }
 
 tasks.named('test') {
