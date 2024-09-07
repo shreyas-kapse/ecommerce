@@ -1,5 +1,6 @@
 package com.e_commerce.backend.service;
 
+import com.e_commerce.backend.CartDTOResponse;
 import com.e_commerce.backend.DefaultResponse;
 import com.e_commerce.backend.Repository.CartItemRepository;
 import com.e_commerce.backend.Repository.CartRepository;
@@ -139,6 +140,31 @@ public class CartService implements ICartService {
                     .success(false)
                     .message("Error occurred while clearing the cart")
                     .httpStatus(Optional.of(HttpStatus.INTERNAL_SERVER_ERROR))
+                    .build();
+        }
+    }
+
+    @Override
+    public CartDTOResponse getCart(String token) {
+        Object userIdObject = jwtService.extractId(token);
+
+        Optional<CartEntity> cartEntityOptional = cartRepository.findByUserId(Long.valueOf(userIdObject.toString()));
+        CartEntity cart;
+        if (cartEntityOptional.isEmpty()) {
+            cart = createNewCart(Long.valueOf(userIdObject.toString()));
+            cartRepository.save(cart);
+            return CartDTOResponse.builder()
+                    .response(DefaultResponse.builder()
+                            .httpStatus(Optional.of(HttpStatus.NO_CONTENT))
+                            .build())
+                    .build();
+        } else {
+            cart = cartEntityOptional.get();
+            return CartDTOResponse.builder()
+                    .response(DefaultResponse.builder()
+                            .success(true)
+                            .build())
+                    .cart(Optional.of(cart))
                     .build();
         }
     }

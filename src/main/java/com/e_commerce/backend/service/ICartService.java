@@ -1,5 +1,6 @@
 package com.e_commerce.backend.service;
 
+import com.e_commerce.backend.CartDTOResponse;
 import com.e_commerce.backend.DefaultResponse;
 
 public interface ICartService {
@@ -8,4 +9,6 @@ public interface ICartService {
     DefaultResponse removeProductFromCart(Long productId, String token);
 
     DefaultResponse clearCart(String token);
+
+    CartDTOResponse getCart(String token);
 }
