@@ -43,7 +43,9 @@ public class LoginService implements ILoginService {
                 Map<String, String> data = new HashMap<>();
                 data.put("token", jwtService.generateToken(user.getUsername()));
 
-                emailService.sendMail("test@yopmail.com","New login request","New login request detected","");
+                String name = jwtService.extractFirstAndLastName(data.get("token"));
+
+                emailService.loginMail("test@yopmail.com","New login request","New login request detected","admin@ecommerce.com", name);
                 return DefaultResponse.builder()
                         .success(true)
                         .data(Optional.of(data))
