@@ -1,9 +1,15 @@
 package com.e_commerce.backend;
 
-import org.springframework.mail.SimpleMailMessage;
+import jakarta.mail.internet.MimeMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
+
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 @Service
 public class EmailService {
@@ -14,13 +20,25 @@ public class EmailService {
     }
 
     @Async
-    public void sendMail(String to, String subject, String body, String from){
-        SimpleMailMessage simpleMailMessage = new SimpleMailMessage();
+    public void loginMail(String to, String subject, String body, String from, String name) {
+        try {
+            MimeMessage message = javaMailSender.createMimeMessage();
 
-        simpleMailMessage.setTo(to);
-        simpleMailMessage.setSubject(subject);
-        simpleMailMessage.setText(body);
+            message.setRecipients(MimeMessage.RecipientType.TO, to);
+            message.setFrom(from);
+            message.setSubject(subject);
+            String htmlTemplate = readFile("src/main/resources/mailTemplate/Login.html");
+            String htmlContent = htmlTemplate.replace("${name}", name);
 
-        javaMailSender.send(simpleMailMessage);
+            message.setContent(htmlContent, "text/html; charset=utf-8");
+            javaMailSender.send(message);
+        } catch (Exception e) {
+            System.out.println("Exception occurred while sending mail.");
+        }
+    }
+
+    public String readFile(String filePath) throws IOException {
+        Path path = Paths.get(filePath);
+        return Files.readString(path, StandardCharsets.UTF_8);
     }
 }
