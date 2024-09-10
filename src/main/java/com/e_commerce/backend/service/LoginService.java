@@ -44,8 +44,9 @@ public class LoginService implements ILoginService {
                 data.put("token", jwtService.generateToken(user.getUsername()));
 
                 String name = jwtService.extractFirstAndLastName(data.get("token"));
+                String email = jwtService.extractUserName(data.get("token"));
 
-                emailService.loginMail("test@yopmail.com","New login request","New login request detected","admin@ecommerce.com", name);
+                emailService.loginMail(email, "New login request", "New login request detected", "admin@ecommerce.com", name);
                 return DefaultResponse.builder()
                         .success(true)
                         .data(Optional.of(data))
