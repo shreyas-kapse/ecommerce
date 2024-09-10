@@ -37,6 +37,25 @@ public class EmailService {
         }
     }
 
+    @Async
+    public void merchantAccountCreationMail(String to, String subject, String from, String name, String username, String password) {
+        try {
+            MimeMessage message = javaMailSender.createMimeMessage();
+
+            message.setRecipients(MimeMessage.RecipientType.TO, to);
+            message.setFrom(from);
+            message.setSubject(subject);
+            String htmlTemplate = readFile("src/main/resources/mailTemplate/MerchantAccountCreation.html");
+            String htmlContent = htmlTemplate.replace("${merchantName}", name)
+                    .replace("${username}", username)
+                    .replace("${password}", password);
+            message.setContent(htmlContent, "text/html; charset=utf-8");
+            javaMailSender.send(message);
+        } catch (Exception e) {
+            System.out.println("Exception occurred while sending mail.");
+        }
+    }
+
     public String readFile(String filePath) throws IOException {
         Path path = Paths.get(filePath);
         return Files.readString(path, StandardCharsets.UTF_8);
