@@ -109,10 +109,13 @@ public class JwtService {
         return claims.get("id");
     }
 
-    public String extractFirstAndLastName(String token){
+    public String extractFirstAndLastName(String token) {
         Claims claims = extractAllClaims(token);
-        Object firstName =  claims.get("firstName");
-        Object lastName =  claims.get("lastName");
-        return firstName.toString()+" "+lastName.toString();
+        Function<Claims, String> name = x -> {
+            String fName = (String) x.get("firstName");
+            String lName = (String) x.get("lastName");
+            return fName + " " + lName;
+        };
+        return name.apply(claims);
     }
 }
