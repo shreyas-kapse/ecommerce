@@ -169,7 +169,7 @@ public class CartService implements ICartService {
         }
     }
 
-    private CartEntity createNewCart(Long userId) {
+    public CartEntity createNewCart(Long userId) {
         CartEntity cart = new CartEntity();
         Optional<UserEntity> user = userRepository.findById(userId);
         cart.setUser(user.get());
