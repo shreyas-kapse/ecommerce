@@ -65,6 +65,7 @@ public class OrderService implements IOrderService {
                     orderItem.setOrder(order);
                     orderItem.setProduct(cartItem.getProduct());
                     orderItem.setQuantity(cartItem.getQuantity());
+                    orderItem.setMerchantId(cartItem.getProduct().getMerchant().getId());
                     orderItem.setPrice(cartItem.getProduct().getPrice() * cartItem.getQuantity());
 
                     totalPrice += orderItem.getPrice();

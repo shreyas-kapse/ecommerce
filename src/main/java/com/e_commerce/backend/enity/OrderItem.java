@@ -27,12 +27,15 @@ public class OrderItem {
 
     private double price;
 
-    public OrderItem(Long id, OrderEntity order, ProductEntity product, int quantity, double price) {
+    private long merchantId;
+
+    public OrderItem(Long id, OrderEntity order, ProductEntity product, int quantity, double price, long merchantId) {
         this.id = id;
         this.order = order;
         this.product = product;
         this.quantity = quantity;
         this.price = price;
+        this.merchantId = merchantId;
     }
 
     public OrderItem() {
