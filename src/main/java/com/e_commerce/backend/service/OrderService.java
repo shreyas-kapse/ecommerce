@@ -1,6 +1,7 @@
 package com.e_commerce.backend.service;
 
 import com.e_commerce.backend.DefaultResponse;
+import com.e_commerce.backend.EmailService;
 import com.e_commerce.backend.Repository.CartRepository;
 import com.e_commerce.backend.Repository.OrderRepository;
 import com.e_commerce.backend.Repository.ProductRepository;
@@ -33,6 +34,9 @@ public class OrderService implements IOrderService {
 
     @Autowired
     private OrderRepository orderRepository;
+
+    @Autowired
+    private EmailService emailService;
 
     @Transactional
     @Override
@@ -81,7 +85,38 @@ public class OrderService implements IOrderService {
                 }
 
                 order.setTotalPrice(totalPrice);
-                orderRepository.save(order);
+
+
+                UserEntity userEntity = user.get();
+
+                order.setAddressLine1(userEntity.getAddressLine1());
+                order.setAddressLine2(userEntity.getAddressLine2());
+                order.setPhoneNumber(userEntity.getPhoneNumber());
+                order.setCity(userEntity.getCity());
+                order.setStatus(userEntity.getState());
+                order.setPostalCode(userEntity.getPostalCode());
+                order.setCountry(userEntity.getCountry());
+
+                StringBuilder address = new StringBuilder();
+                address.append(userEntity.getAddressLine1())
+                        .append(", ")
+                        .append(userEntity.getAddressLine2())
+                        .append(", ")
+                        .append(userEntity.getCity())
+                        .append(", ")
+                        .append(userEntity.getState())
+                        .append(", ")
+                        .append(userEntity.getPostalCode())
+                        .append(", ")
+                        .append(userEntity.getCountry());
+
+                OrderEntity orderEntity = orderRepository.save(order);
+
+                StringBuilder subject = new StringBuilder();
+                subject.append("Thank You for Your Purchase! ")
+                        .append(userEntity.getFirstName() + " " + userEntity.getLastName())
+                        .append(" Order #" + orderEntity.getId() + " confirmed");
+                emailService.orderConfirmationMail(userEntity.getUsername(), String.valueOf(subject), "admin@ecommerce.com", userEntity.getFirstName() + " " + userEntity.getLastName(), orderEntity.getId().toString(), orderEntity.getOrderDate().toString(), orderEntity.getOrderItems(), address.toString(), orderEntity.getOrderDate().plusDays(2).toLocalDate().toString());
 
                 cartService.clearCart(token);
                 return DefaultResponse.builder()
@@ -89,8 +124,8 @@ public class OrderService implements IOrderService {
                         .message("Order placed successfully")
                         .build();
             }
-        }catch (Exception e){
-            return  DefaultResponse.builder()
+        } catch (Exception e) {
+            return DefaultResponse.builder()
                     .success(false)
                     .message("Error occurred while placing the order")
                     .httpStatus(Optional.of(HttpStatus.INTERNAL_SERVER_ERROR))
