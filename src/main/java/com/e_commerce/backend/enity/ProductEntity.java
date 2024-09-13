@@ -37,7 +37,7 @@ public class ProductEntity {
     private String category;
 
     @NotBlank(message = "Brand name can not be blank")
-    @Size(max = 15, min = 3, message = "Brand name can not be more than 15 characters")
+    @Size(max = 25, min = 3, message = "Brand name can not be more than 25 characters")
     private String brand;
 
     @NotNull(message = "Available status is required")
