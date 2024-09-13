@@ -118,4 +118,20 @@ public class JwtService {
         };
         return name.apply(claims);
     }
+
+    public Map<String, String> extractAddress(String token) {
+        Claims claims = extractAllClaims(token);
+        Function<Claims, Map<String, String>> getAddress = x->{
+            Map<String,String> address = new HashMap<>();
+            address.put("phoneNumber",(String) x.get("phoneNumber"));
+            address.put("addressLine1",(String) x.get("addressLine1"));
+            address.put("addressLine2",(String) x.get("addressLine2"));
+            address.put("city",(String) x.get("city"));
+            address.put("state",(String) x.get("state"));
+            address.put("postalCode",(String) x.get("postalCode"));
+            address.put("country",(String) x.get("country"));
+            return address;
+        };
+        return getAddress.apply(claims);
+    }
 }
