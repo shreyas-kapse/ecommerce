@@ -1,0 +1,43 @@
+<h1>Thank You for Your Order, ${customerName}!</h1>
+
+<p>Your order has been successfully placed. Below are the details of your purchase:</p>
+
+<h3>Order Summary</h3>
+<ul>
+    <li><strong>Order Number:</strong> ${orderNumber}</li>
+    <li><strong>Order Date:</strong> ${orderDate}</li>
+</ul>
+
+<h3>Items Ordered</h3>
+<table style="border-collapse: collapse; width: 100%;">
+    <thead>
+    <tr>
+        <th style="border: 1px solid #ddd; padding: 8px;">Product Name</th>
+        <th style="border: 1px solid #ddd; padding: 8px;">Quantity</th>
+        <th style="border: 1px solid #ddd; padding: 8px;">Price</th>
+    </tr>
+    </thead>
+    <tbody>
+    ${orderedItems}
+    </tbody>
+</table>
+
+<h3>Shipping Information</h3>
+<ul>
+    <li><strong>Shipping Address:</strong> ${shippingAddress}</li>
+    <li><strong>Estimated Delivery Date:</strong> ${deliveryDate}</li>
+</ul>
+
+<p>We will notify you once your order is shipped. You can track your order status anytime using the following link:</p>
+<p><a href="#">Track Your Order</a></p>
+
+<hr>
+
+<p>If you have any questions or need assistance, please <a href="#">click here</a> to contact us.</p>
+
+<hr>
+
+<p>Best regards,</p>
+<p>The Ecommerce Team</p>
+<p><a href="mailto:support@yourcompany.com">support@yourcompany.com</a></p>
+<p>Phone: (123) 456-7890</p>
