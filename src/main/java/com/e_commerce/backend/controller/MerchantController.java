@@ -26,35 +26,35 @@ public class MerchantController {
 
     @PostMapping("/add-merchant")
     public ResponseEntity<DefaultResponse> addMerchant(@Valid @RequestBody MerchantEntity merchant, BindingResult result) {
+        DefaultResponse response;
         if (result.hasErrors()) {
             Map<String, String> error = new HashMap<>();
             result.getFieldErrors().forEach(err ->
                     error.put(err.getField(), err.getDefaultMessage())
             );
-            DefaultResponse errorResponse = DefaultResponse.builder()
+            response = DefaultResponse.builder()
                     .success(false)
                     .message("Validation failed")
                     .errors(Optional.of(error))
                     .build();
-            return ResponseEntity.badRequest().body(errorResponse);
+            return ResponseEntity.badRequest().body(response);
         }
-        DefaultResponse response =  merchantService.addMerchant(merchant);
-        if(response.isSuccess()){
-            return ResponseEntity.ok(response);
-        }
-        return ResponseEntity.badRequest().body(response);
+        response = merchantService.addMerchant(merchant);
+
+        return response.isSuccess() ? ResponseEntity.ok(response) : ResponseEntity.badRequest().body(response);
     }
 
     @GetMapping("/{companyName}")
-    public ResponseEntity<Object> getMerchant(@RequestParam(required = false) String email,@PathVariable String companyName){
-       Object object = merchantService.getMerchant(email,companyName);
-       if(object.getClass()== DefaultResponse.class){
-          return ResponseEntity.status(HttpStatus.NO_CONTENT).body(object);
-       }
-       return ResponseEntity.ok(object);
+    public ResponseEntity<Object> getMerchant(@RequestParam(required = false) String email, @PathVariable String companyName) {
+        Object object = merchantService.getMerchant(email, companyName);
+        if (object.getClass() == DefaultResponse.class) {
+            return ResponseEntity.status(HttpStatus.NO_CONTENT).body(object);
+        }
+        return ResponseEntity.ok(object);
     }
+
     @GetMapping("/")
-    public String test(){
+    public String test() {
         return "Controller";
     }
 }
