@@ -26,25 +26,23 @@ public class Login {
     @PostMapping("/login")
     public ResponseEntity<DefaultResponse> login(@RequestBody UserEntity user) {
         DefaultResponse response = loginService.loginUser(user);
-        if (response.isSuccess()) {
-            return ResponseEntity.ok(response);
-        }
-        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
+        return response.isSuccess() ? ResponseEntity.ok(response) : ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
     }
 
     @PostMapping("/register")
     public ResponseEntity<DefaultResponse> register(@Valid @RequestBody RegisterUserDTO registerUserDTO, BindingResult result) {
+        DefaultResponse response;
         if (result.hasErrors()) {
             Map<String, String> error = new HashMap<>();
             result.getFieldErrors().forEach(err -> error.put(err.getField(), err.getDefaultMessage()));
-            DefaultResponse errorResponse = DefaultResponse.builder()
+            response = DefaultResponse.builder()
                     .success(false)
                     .message("Validation failed")
                     .errors(Optional.of(error))
                     .build();
-            return ResponseEntity.badRequest().body(errorResponse);
+            return ResponseEntity.badRequest().body(response);
         }
-        DefaultResponse response = loginService.registerUser(registerUserDTO);
+        response = loginService.registerUser(registerUserDTO);
         HttpStatus status = response.isSuccess() ? HttpStatus.OK : HttpStatus.BAD_REQUEST;
         return new ResponseEntity<>(response, status);
     }
