@@ -20,7 +20,7 @@ public class CartController {
     @PostMapping("/add")
     public ResponseEntity<DefaultResponse> addProductToCart(@RequestHeader("Authorization") String authorizationHeader, @RequestParam Long productId, @RequestParam int quantity) {
         String token;
-
+        DefaultResponse response;
         token = Stream.of(authorizationHeader)
                 .filter(Objects::nonNull)
                 .filter(x -> x.startsWith("Bearer "))
@@ -29,14 +29,14 @@ public class CartController {
                 .orElse("");
 
         if (token.isEmpty()) {
-            DefaultResponse errorResponse = DefaultResponse.builder()
+            response = DefaultResponse.builder()
                     .success(false)
                     .message("Error in session please login")
                     .build();
-            return ResponseEntity.internalServerError().body(errorResponse);
+            return ResponseEntity.internalServerError().body(response);
         }
 
-        DefaultResponse response = cartService.addProductToCart(productId, quantity, token);
+        response = cartService.addProductToCart(productId, quantity, token);
 
         return !response.isSuccess() ? ResponseEntity.status(response.getHttpStatus().get()).body(response) : ResponseEntity.ok(response);
     }
@@ -44,7 +44,7 @@ public class CartController {
     @DeleteMapping("/remove")
     public ResponseEntity<DefaultResponse> removeProductFromCart(@RequestHeader("Authorization") String authorizationHeader, @RequestParam Long productId) {
         String token;
-
+        DefaultResponse response;
         token = Stream.of(authorizationHeader)
                 .filter(Objects::nonNull)
                 .filter(x -> x.startsWith("Bearer "))
@@ -53,24 +53,22 @@ public class CartController {
                 .orElse("");
 
         if (token.isEmpty()) {
-            DefaultResponse errorResponse = DefaultResponse.builder()
+            response = DefaultResponse.builder()
                     .success(false)
                     .message("Error in session please login")
                     .build();
-            return ResponseEntity.internalServerError().body(errorResponse);
+            return ResponseEntity.internalServerError().body(response);
         }
 
-        DefaultResponse response = cartService.removeProductFromCart(productId, token);
-        if (!response.isSuccess()) {
-            return ResponseEntity.status(response.getHttpStatus().get()).body(response);
-        }
-        return ResponseEntity.ok(response);
+        response = cartService.removeProductFromCart(productId, token);
+
+        return !response.isSuccess()? ResponseEntity.status(response.getHttpStatus().get()).body(response): ResponseEntity.ok(response);
     }
 
     @DeleteMapping("/clear")
     public ResponseEntity<DefaultResponse> clearCart(@RequestHeader("Authorization") String authorizationHeader) {
         String token;
-
+        DefaultResponse response;
         token = Stream.of(authorizationHeader)
                 .filter(Objects::nonNull)
                 .filter(x -> x.startsWith("Bearer "))
@@ -79,13 +77,13 @@ public class CartController {
                 .orElse("");
 
         if (token.isEmpty()) {
-            DefaultResponse errorResponse = DefaultResponse.builder()
+            response = DefaultResponse.builder()
                     .success(false)
                     .message("Error in session please login")
                     .build();
-            return ResponseEntity.internalServerError().body(errorResponse);
+            return ResponseEntity.internalServerError().body(response);
         }
-        DefaultResponse response = cartService.clearCart(token);
+        response = cartService.clearCart(token);
 
         return !response.isSuccess() ? ResponseEntity.status(response.getHttpStatus().get()).body(response) : ResponseEntity.ok(response);
 
