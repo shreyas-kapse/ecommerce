@@ -23,36 +23,34 @@ public class ProductController {
 
     @PostMapping("/add")
     public ResponseEntity<DefaultResponse> addProduct(@Valid @RequestBody ProductEntity productEntity, BindingResult result, @RequestHeader("Authorization") String authorizationHeader) {
+        DefaultResponse response;
         if (result.hasErrors()) {
             Map<String, String> error = new HashMap<>();
             result.getFieldErrors().forEach(err ->
                     error.put(err.getField(), err.getDefaultMessage())
             );
-            DefaultResponse errorResponse = DefaultResponse.builder()
+            response = DefaultResponse.builder()
                     .success(false)
                     .message("Validation failed")
                     .errors(Optional.of(error))
                     .build();
-            return ResponseEntity.badRequest().body(errorResponse);
+            return ResponseEntity.badRequest().body(response);
         }
         String token = "";
         if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
             token = authorizationHeader.substring(7);
         }
         if (token.isEmpty()) {
-            DefaultResponse errorResponse = DefaultResponse.builder()
+            response = DefaultResponse.builder()
                     .success(false)
                     .message("Error in session please login")
                     .build();
-            return ResponseEntity.internalServerError().body(errorResponse);
+            return ResponseEntity.internalServerError().body(response);
         }
 
-        DefaultResponse response = productService.addProduct(productEntity, token);
+        response = productService.addProduct(productEntity, token);
 
-        if (!response.isSuccess()) {
-            return ResponseEntity.status(response.getHttpStatus().get()).body(response);
-        }
-        return ResponseEntity.ok(response);
+        return !response.isSuccess() ? ResponseEntity.status(response.getHttpStatus().get()).body(response) : ResponseEntity.ok(response);
     }
 
     @GetMapping("/merchant/{merchantName}")

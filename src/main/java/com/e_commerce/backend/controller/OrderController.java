@@ -30,15 +30,15 @@ public class OrderController {
                 .findFirst()
                 .orElse("");
 
-        DefaultResponse defaultResponse;
+        DefaultResponse response;
         if (token.isEmpty()) {
-            defaultResponse = DefaultResponse.builder()
+            response = DefaultResponse.builder()
                     .success(false)
                     .message("Error in session please login")
                     .build();
-            return ResponseEntity.internalServerError().body(defaultResponse);
+            return ResponseEntity.internalServerError().body(response);
         }
-        DefaultResponse response = orderService.placeOrder(token);
+        response = orderService.placeOrder(token);
         return response.isSuccess() ? ResponseEntity.ok(response) : ResponseEntity.status(response.getHttpStatus().get()).body(response);
     }
 }
