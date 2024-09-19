@@ -2,6 +2,8 @@ package com.e_commerce.backend.controller;
 
 import com.e_commerce.backend.DefaultResponse;
 import com.e_commerce.backend.service.IOrderService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -12,6 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.Objects;
 import java.util.stream.Stream;
 
+@Tag(name = "Order", description = "Operations related to the order")
 @RestController
 @RequestMapping("/order")
 public class OrderController {
@@ -20,6 +23,7 @@ public class OrderController {
     private IOrderService orderService;
 
     @PostMapping("/place")
+    @Operation(summary = "Place order")
     public ResponseEntity<DefaultResponse> placeOrder(@RequestHeader("Authorization") String authorizationHeader) {
         String token;
 
