@@ -1,7 +1,7 @@
 package com.e_commerce.backend.controller;
 
 import com.e_commerce.backend.DefaultResponse;
-import com.e_commerce.backend.ProductsDTO;
+import com.e_commerce.backend.dtos.ProductsDTO;
 import com.e_commerce.backend.enity.ProductEntity;
 import com.e_commerce.backend.service.IProductService;
 import jakarta.validation.Valid;

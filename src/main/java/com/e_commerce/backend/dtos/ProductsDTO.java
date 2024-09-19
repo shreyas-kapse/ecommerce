@@ -1,5 +1,6 @@
-package com.e_commerce.backend;
+package com.e_commerce.backend.dtos;
 
+import com.e_commerce.backend.DefaultResponse;
 import com.e_commerce.backend.enity.ProductEntity;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.AllArgsConstructor;
