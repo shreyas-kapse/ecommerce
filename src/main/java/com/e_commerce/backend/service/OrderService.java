@@ -55,7 +55,11 @@ public class OrderService implements IOrderService {
             } else {
                 cart = cartEntityOptional.get();
                 if (cart.getCartItems().isEmpty()) {
-                    throw new IllegalStateException("Cart is empty.");
+                    return DefaultResponse.builder()
+                            .success(false)
+                            .httpStatus(Optional.of(HttpStatus.BAD_REQUEST))
+                            .message("Cart is empty")
+                            .build();
                 }
 
                 Optional<UserEntity> user = userRepository.findById(Long.valueOf(userIdObject.toString()));
