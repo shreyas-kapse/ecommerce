@@ -3,6 +3,8 @@ package com.e_commerce.backend.controller;
 import com.e_commerce.backend.dtos.CartDTOResponse;
 import com.e_commerce.backend.DefaultResponse;
 import com.e_commerce.backend.service.ICartService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -10,6 +12,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.Objects;
 import java.util.stream.Stream;
 
+@Tag(name = "Cart ", description = "Operations related to cart")
 @RestController
 @RequestMapping("/cart")
 public class CartController {
@@ -18,6 +21,7 @@ public class CartController {
     private ICartService cartService;
 
     @PostMapping("/add")
+    @Operation(summary = "Add product to the cart")
     public ResponseEntity<DefaultResponse> addProductToCart(@RequestHeader("Authorization") String authorizationHeader, @RequestParam Long productId, @RequestParam int quantity) {
         String token;
         DefaultResponse response;
@@ -42,6 +46,7 @@ public class CartController {
     }
 
     @DeleteMapping("/remove")
+    @Operation(summary = "Delete product from cart", description = "Delete product from cart by product id")
     public ResponseEntity<DefaultResponse> removeProductFromCart(@RequestHeader("Authorization") String authorizationHeader, @RequestParam Long productId) {
         String token;
         DefaultResponse response;
@@ -62,10 +67,11 @@ public class CartController {
 
         response = cartService.removeProductFromCart(productId, token);
 
-        return !response.isSuccess()? ResponseEntity.status(response.getHttpStatus().get()).body(response): ResponseEntity.ok(response);
+        return !response.isSuccess() ? ResponseEntity.status(response.getHttpStatus().get()).body(response) : ResponseEntity.ok(response);
     }
 
     @DeleteMapping("/clear")
+    @Operation(summary = "Clear cart", description = "Remove all products from cart")
     public ResponseEntity<DefaultResponse> clearCart(@RequestHeader("Authorization") String authorizationHeader) {
         String token;
         DefaultResponse response;
@@ -90,6 +96,7 @@ public class CartController {
     }
 
     @GetMapping
+    @Operation(summary = "Get cart items", description = "Get all cart items")
     public ResponseEntity<CartDTOResponse> getCart(@RequestHeader("Authorization") String authorizationHeader) {
         String token;
 
