@@ -5,6 +5,7 @@ import com.e_commerce.backend.DefaultResponse;
 import com.e_commerce.backend.EmailService;
 import com.e_commerce.backend.Repository.UserRepository;
 import com.e_commerce.backend.Role;
+import com.e_commerce.backend.dtos.RegisterUserDTO;
 import com.e_commerce.backend.enity.UserEntity;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;

@@ -1,6 +1,7 @@
 package com.e_commerce.backend.service;
 
 import com.e_commerce.backend.DefaultResponse;
+import com.e_commerce.backend.dtos.RegisterUserDTO;
 import com.e_commerce.backend.enity.UserEntity;
 
 public interface ILoginService {

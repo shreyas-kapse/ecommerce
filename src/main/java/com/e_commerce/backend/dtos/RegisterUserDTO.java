@@ -1,4 +1,4 @@
-package com.e_commerce.backend.service;
+package com.e_commerce.backend.dtos;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
