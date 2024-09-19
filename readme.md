@@ -33,7 +33,7 @@
 ## ⚙️ Technologies Used
 
 - **Java**: Version 17+  
-- **Spring Boot**: Version 3.x  
+- **Spring Boot**: Version 3.0  
 - **PostgreSQL**: Version 15+  
 - **JWT**: For secure authentication  
 - **Swagger OpenAPI 3**: For API documentation  
