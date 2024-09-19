@@ -1,6 +1,6 @@
 package com.e_commerce.backend.controller;
 
-import com.e_commerce.backend.CartDTOResponse;
+import com.e_commerce.backend.dtos.CartDTOResponse;
 import com.e_commerce.backend.DefaultResponse;
 import com.e_commerce.backend.service.ICartService;
 import org.springframework.beans.factory.annotation.Autowired;

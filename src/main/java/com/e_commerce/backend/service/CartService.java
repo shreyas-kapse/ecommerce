@@ -1,6 +1,6 @@
 package com.e_commerce.backend.service;
 
-import com.e_commerce.backend.CartDTOResponse;
+import com.e_commerce.backend.dtos.CartDTOResponse;
 import com.e_commerce.backend.DefaultResponse;
 import com.e_commerce.backend.Repository.CartItemRepository;
 import com.e_commerce.backend.Repository.CartRepository;
