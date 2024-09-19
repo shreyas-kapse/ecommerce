@@ -2,10 +2,10 @@ package com.e_commerce.backend.controller;
 
 import com.e_commerce.backend.DefaultResponse;
 import com.e_commerce.backend.dtos.LoginDTO;
-import com.e_commerce.backend.enity.UserEntity;
-import com.e_commerce.backend.service.ILoginService;
 import com.e_commerce.backend.dtos.RegisterUserDTO;
+import com.e_commerce.backend.service.ILoginService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -19,6 +19,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
+@Tag(name = "Authentication", description = "Authentication APIs")
 @RestController
 public class Login {
 
@@ -33,6 +34,7 @@ public class Login {
     }
 
     @PostMapping("/register")
+    @Operation(summary = "Register on platform", description = "Register API")
     public ResponseEntity<DefaultResponse> register(@Valid @RequestBody RegisterUserDTO registerUserDTO, BindingResult result) {
         DefaultResponse response;
         if (result.hasErrors()) {
