@@ -3,6 +3,9 @@ package com.e_commerce.backend.controller;
 import com.e_commerce.backend.DefaultResponse;
 import com.e_commerce.backend.enity.MerchantEntity;
 import com.e_commerce.backend.service.IMerchantService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -17,6 +20,7 @@ import java.util.Map;
 import java.util.Optional;
 
 
+@Tag(name = "Merchant", description = "Operations related to the Merchant")
 @RestController
 @RequestMapping("/merchant")
 public class MerchantController {
@@ -25,6 +29,7 @@ public class MerchantController {
     private IMerchantService merchantService;
 
     @PostMapping("/add-merchant")
+    @Operation(summary = "Add merchant ", description = "Add merchant to the platform")
     public ResponseEntity<DefaultResponse> addMerchant(@Valid @RequestBody MerchantEntity merchant, BindingResult result) {
         DefaultResponse response;
         if (result.hasErrors()) {
@@ -45,8 +50,12 @@ public class MerchantController {
     }
 
     @GetMapping("/{companyName}")
-    public ResponseEntity<Object> getMerchant(@RequestParam(required = false) String email, @PathVariable String companyName) {
-        Object object = merchantService.getMerchant(email, companyName);
+    @Operation(summary = "Get merchant by company name")
+    public ResponseEntity<Object> getMerchant(
+            @Parameter(description = "Get merchant by company name", example = "SK Enterprises")
+            @PathVariable String companyName
+    ) {
+        Object object = merchantService.getMerchant(companyName);
         if (object.getClass() == DefaultResponse.class) {
             return ResponseEntity.status(HttpStatus.NO_CONTENT).body(object);
         }
@@ -54,6 +63,7 @@ public class MerchantController {
     }
 
     @GetMapping("/")
+    @Operation(summary = "Testing endpoint")
     public String test() {
         return "Controller";
     }
