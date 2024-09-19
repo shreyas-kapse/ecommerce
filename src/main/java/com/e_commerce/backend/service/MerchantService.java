@@ -74,8 +74,8 @@ public class MerchantService implements IMerchantService {
     }
 
     @Override
-    public Object getMerchant(String email, String companyName) {
-        Optional<MerchantEntity> merchant = merchantRepository.findByEmail(email);
+    public Object getMerchant(String companyName) {
+        Optional<MerchantEntity> merchant = merchantRepository.findByCompanyName(companyName);
         if (merchant.isPresent() && merchant.get().getCompanyName().equalsIgnoreCase(companyName)) {
             return merchant;
         }
