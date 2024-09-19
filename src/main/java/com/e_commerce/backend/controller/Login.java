@@ -1,9 +1,11 @@
 package com.e_commerce.backend.controller;
 
 import com.e_commerce.backend.DefaultResponse;
+import com.e_commerce.backend.dtos.LoginDTO;
 import com.e_commerce.backend.enity.UserEntity;
 import com.e_commerce.backend.service.ILoginService;
 import com.e_commerce.backend.dtos.RegisterUserDTO;
+import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -24,7 +26,8 @@ public class Login {
     private ILoginService loginService;
 
     @PostMapping("/login")
-    public ResponseEntity<DefaultResponse> login(@RequestBody UserEntity user) {
+    @Operation(summary = "Login to platform", description = "Login API")
+    public ResponseEntity<DefaultResponse> login(@RequestBody LoginDTO user) {
         DefaultResponse response = loginService.loginUser(user);
         return response.isSuccess() ? ResponseEntity.ok(response) : ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
     }

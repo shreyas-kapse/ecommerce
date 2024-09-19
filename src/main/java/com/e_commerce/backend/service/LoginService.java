@@ -5,6 +5,7 @@ import com.e_commerce.backend.DefaultResponse;
 import com.e_commerce.backend.EmailService;
 import com.e_commerce.backend.Repository.UserRepository;
 import com.e_commerce.backend.Role;
+import com.e_commerce.backend.dtos.LoginDTO;
 import com.e_commerce.backend.dtos.RegisterUserDTO;
 import com.e_commerce.backend.enity.UserEntity;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,7 +36,7 @@ public class LoginService implements ILoginService {
     private EmailService emailService;
 
     @Override
-    public DefaultResponse loginUser(UserEntity user) {
+    public DefaultResponse loginUser(LoginDTO user) {
         try {
             Authentication authentication = authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(user.getUsername(), user.getPassword()));
