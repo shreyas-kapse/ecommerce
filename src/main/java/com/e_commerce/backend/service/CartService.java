@@ -48,7 +48,13 @@ public class CartService implements ICartService {
             CartEntity cart;
 
             cart = cartEntityOptional.orElseGet(() -> createNewCart(Long.valueOf(userIdObject.toString())));
-
+            if (cart == null) {
+                DefaultResponse.builder()
+                        .success(false)
+                        .message("Error occurred while removing product")
+                        .httpStatus(Optional.of(HttpStatus.INTERNAL_SERVER_ERROR))
+                        .build();
+            }
             Optional<ProductEntity> product = productRepository.findById(productId);
 
             if (product.isEmpty()) {
@@ -111,6 +117,13 @@ public class CartService implements ICartService {
             CartEntity cart;
 
             cart = cartEntityOptional.orElseGet(() -> createNewCart(Long.valueOf(userIdObject.toString())));
+            if (cart == null) {
+                DefaultResponse.builder()
+                        .success(false)
+                        .message("Error occurred while removing product")
+                        .httpStatus(Optional.of(HttpStatus.INTERNAL_SERVER_ERROR))
+                        .build();
+            }
             cart.getCartItems().removeIf(item -> item.getProduct().getId().equals(productId));
 
             cartRepository.save(cart);
@@ -141,6 +154,13 @@ public class CartService implements ICartService {
             CartEntity cart;
 
             cart = cartEntityOptional.orElseGet(() -> createNewCart(Long.valueOf(userIdObject.toString())));
+            if (cart == null) {
+                return DefaultResponse.builder()
+                        .success(false)
+                        .message("Error occurred while clearing the cart")
+                        .httpStatus(Optional.of(HttpStatus.INTERNAL_SERVER_ERROR))
+                        .build();
+            }
             cart.getCartItems().clear();
 
             cartRepository.save(cart);
@@ -164,39 +184,63 @@ public class CartService implements ICartService {
 
     @Override
     public CartDTOResponse getCart(String token) {
-        Object userIdObject = jwtService.extractId(token);
-        log.info("Processing get cart request for user with id {}", userIdObject.toString());
+        try {
+            Object userIdObject = jwtService.extractId(token);
+            log.info("Processing get cart request for user with id {}", userIdObject.toString());
 
-        Optional<CartEntity> cartEntityOptional = cartRepository.findByUserId(Long.valueOf(userIdObject.toString()));
-        CartEntity cart;
-        if (cartEntityOptional.isEmpty()) {
-            cart = createNewCart(Long.valueOf(userIdObject.toString()));
-            cartRepository.save(cart);
+            Optional<CartEntity> cartEntityOptional = cartRepository.findByUserId(Long.valueOf(userIdObject.toString()));
+            CartEntity cart;
+            if (cartEntityOptional.isEmpty()) {
+                cart = createNewCart(Long.valueOf(userIdObject.toString()));
+                if (cart == null) {
+                    return CartDTOResponse.builder()
+                            .response(DefaultResponse.builder()
+                                    .success(false)
+                                    .httpStatus(Optional.of(HttpStatus.INTERNAL_SERVER_ERROR))
+                                    .build())
+                            .build();
+                }
+                cartRepository.save(cart);
 
+                return CartDTOResponse.builder()
+                        .response(DefaultResponse.builder()
+                                .httpStatus(Optional.of(HttpStatus.NO_CONTENT))
+                                .build())
+                        .build();
+            } else {
+                cart = cartEntityOptional.get();
+
+                log.info("Successfully processed get cart request for user with id {}", userIdObject.toString());
+                return CartDTOResponse.builder()
+                        .response(DefaultResponse.builder()
+                                .success(true)
+                                .build())
+                        .cart(Optional.of(cart))
+                        .build();
+            }
+        } catch (Exception exception) {
+            log.info("Error occurred while processing get cart request with error {} ", exception.getMessage());
             return CartDTOResponse.builder()
                     .response(DefaultResponse.builder()
-                            .httpStatus(Optional.of(HttpStatus.NO_CONTENT))
+                            .success(false)
+                            .httpStatus(Optional.of(HttpStatus.INTERNAL_SERVER_ERROR))
                             .build())
-                    .build();
-        } else {
-            cart = cartEntityOptional.get();
-
-            log.info("Successfully processed get cart request for user with id {}", userIdObject.toString());
-            return CartDTOResponse.builder()
-                    .response(DefaultResponse.builder()
-                            .success(true)
-                            .build())
-                    .cart(Optional.of(cart))
                     .build();
         }
     }
 
     public CartEntity createNewCart(Long userId) {
-        CartEntity cart = new CartEntity();
-        Optional<UserEntity> user = userRepository.findById(userId);
-        cart.setUser(user.get());
+        try {
+            log.info("Processing create new cart request for user with id {}", userId);
+            CartEntity cart = new CartEntity();
+            Optional<UserEntity> user = userRepository.findById(userId);
+            cart.setUser(user.get());
 
-        log.info("Successfully processed create cart request for user with id {}", userId);
-        return cartRepository.save(cart);
+            log.info("Successfully processed create cart request for user with id {}", userId);
+            return cartRepository.save(cart);
+        } catch (Exception exception) {
+            log.info("Error occurred while processing create cart request for user id {}, error {} ", exception.getMessage());
+        }
+        return null;
     }
 }
