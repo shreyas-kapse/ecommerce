@@ -8,6 +8,7 @@ import com.e_commerce.backend.Role;
 import com.e_commerce.backend.dtos.LoginDTO;
 import com.e_commerce.backend.dtos.RegisterUserDTO;
 import com.e_commerce.backend.enity.UserEntity;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -20,6 +21,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
+@Slf4j
 @Service
 public class LoginService implements ILoginService {
 
@@ -38,6 +40,7 @@ public class LoginService implements ILoginService {
     @Override
     public DefaultResponse loginUser(LoginDTO user) {
         try {
+            log.info("Fetching user details for login");
             Authentication authentication = authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(user.getUsername(), user.getPassword()));
 
@@ -49,18 +52,21 @@ public class LoginService implements ILoginService {
                 String email = jwtService.extractUserName(data.get("token"));
 
                 emailService.loginMail(email, "New login request", "New login request detected", "admin@ecommerce.com", name);
+                log.info("Successfully processed login request for {}",user.getUsername());
+
                 return DefaultResponse.builder()
                         .success(true)
                         .data(Optional.of(data))
                         .build();
             }
         } catch (AuthenticationException ex) {
+            log.error("Error occurred while processing login request for {} user with error {}",user.getUsername(),ex.getMessage());
             return DefaultResponse.builder()
                     .success(false)
                     .message("Invalid username or password")
                     .build();
         }
-
+        log.error("Error occurred while processing login request for {} user",user.getUsername());
         return DefaultResponse.builder()
                 .success(false)
                 .message("Error occurred in login")
@@ -70,6 +76,7 @@ public class LoginService implements ILoginService {
     @Override
     public DefaultResponse registerUser(RegisterUserDTO registerUserDTO) {
         try {
+            log.info("Processing register user request");
             Optional<UserEntity> user = userRepository.findUserByUsername(registerUserDTO.getUsername());
             if (user.isPresent()) {
                 return DefaultResponse.builder()
@@ -95,12 +102,15 @@ public class LoginService implements ILoginService {
                     .build();
             userRepository.save(userEntity);
 
+            log.info("Successfully processed register user request for {}",registerUserDTO.getUsername());
+
             return DefaultResponse.builder()
                     .success(true)
                     .message("User register successfully")
                     .build();
 
         } catch (Exception exception) {
+            log.error("Error occurred while processing register user request for {} user with error {}",registerUserDTO.getUsername(), exception.getMessage());
             return DefaultResponse.builder()
                     .success(false)
                     .message("Error occurred while registering the user")
