@@ -10,6 +10,7 @@ import com.e_commerce.backend.enity.CartEntity;
 import com.e_commerce.backend.enity.CartItem;
 import com.e_commerce.backend.enity.ProductEntity;
 import com.e_commerce.backend.enity.UserEntity;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -17,6 +18,7 @@ import org.springframework.stereotype.Service;
 import java.math.BigDecimal;
 import java.util.Optional;
 
+@Slf4j
 @Service
 public class CartService implements ICartService {
 
@@ -39,6 +41,8 @@ public class CartService implements ICartService {
     public DefaultResponse addProductToCart(Long productId, int quantity, String token) {
         try {
             Object userIdObject = jwtService.extractId(token);
+
+            log.info("Processing add product to cart request with product id {} for user with id {}", productId, userIdObject.toString());
 
             Optional<CartEntity> cartEntityOptional = cartRepository.findByUserId(Long.valueOf(userIdObject.toString()));
             CartEntity cart;
@@ -63,6 +67,8 @@ public class CartService implements ICartService {
                 CartItem cartItem = existingItem.get();
                 cartItem.setQuantity(cartItem.getQuantity() + quantity);
                 cartItemRepository.save(cartItem);
+
+                log.info("Request is already fulfilled to add product to cart with product id {} for user with id {}", productId, userIdObject.toString());
                 return DefaultResponse.builder()
                         .success(true)
                         .message("Product added successfully")
@@ -78,12 +84,15 @@ public class CartService implements ICartService {
             cart.getCartItems().add(newItem);
 
             cartRepository.save(cart);
+
+            log.info("Successfully processed request to add product to cart with product id {} for user with id {}", productId, userIdObject.toString());
             return DefaultResponse.builder()
                     .success(true)
                     .message("Product added successfully")
                     .httpStatus(Optional.of(HttpStatus.CREATED))
                     .build();
         } catch (Exception e) {
+            log.info("Error occurred while processing request to add product to cart with error {} ", e.getMessage());
             return DefaultResponse.builder()
                     .success(false)
                     .message("Error occurred while adding product")
@@ -97,18 +106,23 @@ public class CartService implements ICartService {
         try {
             Object userIdObject = jwtService.extractId(token);
 
+            log.info("Processing remove product from cart request with product id {} for user with id {}", productId, userIdObject.toString());
             Optional<CartEntity> cartEntityOptional = cartRepository.findByUserId(Long.valueOf(userIdObject.toString()));
             CartEntity cart;
 
             cart = cartEntityOptional.orElseGet(() -> createNewCart(Long.valueOf(userIdObject.toString())));
             cart.getCartItems().removeIf(item -> item.getProduct().getId().equals(productId));
+
             cartRepository.save(cart);
+
+            log.info("Successfully processed request to remove product from cart with product id {} for user with id {}", productId, userIdObject.toString());
             return DefaultResponse.builder()
                     .success(true)
                     .message("Product removed successfully")
                     .httpStatus(Optional.of(HttpStatus.NO_CONTENT))
                     .build();
         } catch (Exception e) {
+            log.info("Error occurred while processing request to remove product from cart with error {} ", e.getMessage());
             return DefaultResponse.builder()
                     .success(false)
                     .message("Error occurred while removing product")
@@ -121,14 +135,17 @@ public class CartService implements ICartService {
     public DefaultResponse clearCart(String token) {
         try {
             Object userIdObject = jwtService.extractId(token);
+            log.info("Processing clear cart request for user with id {}", userIdObject.toString());
 
             Optional<CartEntity> cartEntityOptional = cartRepository.findByUserId(Long.valueOf(userIdObject.toString()));
             CartEntity cart;
 
             cart = cartEntityOptional.orElseGet(() -> createNewCart(Long.valueOf(userIdObject.toString())));
             cart.getCartItems().clear();
+
             cartRepository.save(cart);
 
+            log.info("Successfully processed clear cart request for user with id {}", userIdObject.toString());
             return DefaultResponse.builder()
                     .success(true)
                     .message("Cart cleared successfully")
@@ -136,6 +153,7 @@ public class CartService implements ICartService {
                     .build();
 
         } catch (Exception e) {
+            log.info("Error occurred while processing clear cart request with error {} ", e.getMessage());
             return DefaultResponse.builder()
                     .success(false)
                     .message("Error occurred while clearing the cart")
@@ -147,12 +165,14 @@ public class CartService implements ICartService {
     @Override
     public CartDTOResponse getCart(String token) {
         Object userIdObject = jwtService.extractId(token);
+        log.info("Processing get cart request for user with id {}", userIdObject.toString());
 
         Optional<CartEntity> cartEntityOptional = cartRepository.findByUserId(Long.valueOf(userIdObject.toString()));
         CartEntity cart;
         if (cartEntityOptional.isEmpty()) {
             cart = createNewCart(Long.valueOf(userIdObject.toString()));
             cartRepository.save(cart);
+
             return CartDTOResponse.builder()
                     .response(DefaultResponse.builder()
                             .httpStatus(Optional.of(HttpStatus.NO_CONTENT))
@@ -160,6 +180,8 @@ public class CartService implements ICartService {
                     .build();
         } else {
             cart = cartEntityOptional.get();
+
+            log.info("Successfully processed get cart request for user with id {}", userIdObject.toString());
             return CartDTOResponse.builder()
                     .response(DefaultResponse.builder()
                             .success(true)
@@ -173,6 +195,8 @@ public class CartService implements ICartService {
         CartEntity cart = new CartEntity();
         Optional<UserEntity> user = userRepository.findById(userId);
         cart.setUser(user.get());
+
+        log.info("Successfully processed create cart request for user with id {}", userId);
         return cartRepository.save(cart);
     }
 }

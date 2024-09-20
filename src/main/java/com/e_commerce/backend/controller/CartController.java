@@ -5,6 +5,7 @@ import com.e_commerce.backend.DefaultResponse;
 import com.e_commerce.backend.service.ICartService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -12,6 +13,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.Objects;
 import java.util.stream.Stream;
 
+@Slf4j
 @Tag(name = "Cart ", description = "Operations related to cart")
 @RestController
 @RequestMapping("/cart")
@@ -25,6 +27,9 @@ public class CartController {
     public ResponseEntity<DefaultResponse> addProductToCart(@RequestHeader("Authorization") String authorizationHeader, @RequestParam Long productId, @RequestParam int quantity) {
         String token;
         DefaultResponse response;
+
+        log.info("Processing add product request for product id {}",productId);
+
         token = Stream.of(authorizationHeader)
                 .filter(Objects::nonNull)
                 .filter(x -> x.startsWith("Bearer "))
@@ -50,6 +55,9 @@ public class CartController {
     public ResponseEntity<DefaultResponse> removeProductFromCart(@RequestHeader("Authorization") String authorizationHeader, @RequestParam Long productId) {
         String token;
         DefaultResponse response;
+
+        log.info("Processing remove product request for product id {}",productId);
+
         token = Stream.of(authorizationHeader)
                 .filter(Objects::nonNull)
                 .filter(x -> x.startsWith("Bearer "))
@@ -75,6 +83,9 @@ public class CartController {
     public ResponseEntity<DefaultResponse> clearCart(@RequestHeader("Authorization") String authorizationHeader) {
         String token;
         DefaultResponse response;
+
+        log.info("Processing clear cart request ");
+
         token = Stream.of(authorizationHeader)
                 .filter(Objects::nonNull)
                 .filter(x -> x.startsWith("Bearer "))
@@ -99,6 +110,8 @@ public class CartController {
     @Operation(summary = "Get cart items", description = "Get all cart items")
     public ResponseEntity<CartDTOResponse> getCart(@RequestHeader("Authorization") String authorizationHeader) {
         String token;
+
+        log.info("Processing get cart items request ");
 
         token = Stream.of(authorizationHeader)
                 .filter(Objects::nonNull)
