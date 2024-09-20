@@ -1,12 +1,14 @@
 package com.e_commerce.backend.controller;
 
 import com.e_commerce.backend.DefaultResponse;
+import com.e_commerce.backend.dtos.MerchantDTO;
 import com.e_commerce.backend.enity.MerchantEntity;
 import com.e_commerce.backend.service.IMerchantService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,7 +21,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
-
+@Slf4j
 @Tag(name = "Merchant", description = "Operations related to the Merchant")
 @RestController
 @RequestMapping("/merchant")
@@ -44,6 +46,7 @@ public class MerchantController {
                     .build();
             return ResponseEntity.badRequest().body(response);
         }
+        log.info("Processing add merchant request for the merchant with name {}", merchant.getFirstName() + " " + merchant.getLastName());
         response = merchantService.addMerchant(merchant);
 
         return response.isSuccess() ? ResponseEntity.ok(response) : ResponseEntity.badRequest().body(response);
@@ -51,15 +54,12 @@ public class MerchantController {
 
     @GetMapping("/{companyName}")
     @Operation(summary = "Get merchant by company name")
-    public ResponseEntity<Object> getMerchant(
-            @Parameter(description = "Get merchant by company name", example = "SK Enterprises")
-            @PathVariable String companyName
+    public ResponseEntity<MerchantDTO> getMerchant(
+            @Parameter(description = "Get merchant by company name", example = "SK Enterprises") @PathVariable("companyName") String companyName
     ) {
-        Object object = merchantService.getMerchant(companyName);
-        if (object.getClass() == DefaultResponse.class) {
-            return ResponseEntity.status(HttpStatus.NO_CONTENT).body(object);
-        }
-        return ResponseEntity.ok(object);
+        log.info("Processing get merchant by company name request for the merchant with company name {}", companyName);
+        MerchantDTO response = merchantService.getMerchant(companyName);
+        return response.getResponse().isSuccess() ? ResponseEntity.ok(response) : ResponseEntity.status(response.getResponse().getHttpStatus().get()).body(response);
     }
 
     @GetMapping("/")
