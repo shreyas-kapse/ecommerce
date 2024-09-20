@@ -8,12 +8,14 @@ import com.e_commerce.backend.Repository.ProductRepository;
 import com.e_commerce.backend.Repository.UserRepository;
 import com.e_commerce.backend.enity.*;
 import jakarta.transaction.Transactional;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
 
+@Slf4j
 @Service
 public class OrderService implements IOrderService {
 
@@ -43,6 +45,7 @@ public class OrderService implements IOrderService {
     public DefaultResponse placeOrder(String token) {
         try {
             Object userIdObject = jwtService.extractId(token);
+            log.info("Processing place order request for user with id {}", userIdObject.toString());
 
             Optional<CartEntity> cartEntityOptional = cartRepository.findByUserId(Long.valueOf(userIdObject.toString()));
             CartEntity cart;
@@ -50,6 +53,7 @@ public class OrderService implements IOrderService {
                 cart = cartService.createNewCart(Long.valueOf(userIdObject.toString()));
                 cartRepository.save(cart);
                 return DefaultResponse.builder()
+                        .success(false)
                         .httpStatus(Optional.of(HttpStatus.NO_CONTENT))
                         .build();
             } else {
@@ -123,12 +127,15 @@ public class OrderService implements IOrderService {
                 emailService.orderConfirmationMail(userEntity.getUsername(), String.valueOf(subject), "admin@ecommerce.com", userEntity.getFirstName() + " " + userEntity.getLastName(), orderEntity.getId().toString(), orderEntity.getOrderDate().toString(), orderEntity.getOrderItems(), address.toString(), orderEntity.getOrderDate().plusDays(2).toLocalDate().toString());
 
                 cartService.clearCart(token);
+                log.info("Successfully processed place order request for user with id {}", userIdObject.toString());
+
                 return DefaultResponse.builder()
                         .success(true)
                         .message("Order placed successfully")
                         .build();
             }
         } catch (Exception e) {
+            log.error("Error occurred while processing place order request with error {} ", e.getMessage());
             return DefaultResponse.builder()
                     .success(false)
                     .message("Error occurred while placing the order")
