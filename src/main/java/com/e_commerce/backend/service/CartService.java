@@ -98,7 +98,7 @@ public class CartService implements ICartService {
                     .httpStatus(Optional.of(HttpStatus.CREATED))
                     .build();
         } catch (Exception e) {
-            log.info("Error occurred while processing request to add product to cart with error {} ", e.getMessage());
+            log.error("Error occurred while processing request to add product to cart with error {} ", e.getMessage());
             return DefaultResponse.builder()
                     .success(false)
                     .message("Error occurred while adding product")
@@ -135,7 +135,7 @@ public class CartService implements ICartService {
                     .httpStatus(Optional.of(HttpStatus.NO_CONTENT))
                     .build();
         } catch (Exception e) {
-            log.info("Error occurred while processing request to remove product from cart with error {} ", e.getMessage());
+            log.error("Error occurred while processing request to remove product from cart with error {} ", e.getMessage());
             return DefaultResponse.builder()
                     .success(false)
                     .message("Error occurred while removing product")
@@ -173,7 +173,7 @@ public class CartService implements ICartService {
                     .build();
 
         } catch (Exception e) {
-            log.info("Error occurred while processing clear cart request with error {} ", e.getMessage());
+            log.error("Error occurred while processing clear cart request with error {} ", e.getMessage());
             return DefaultResponse.builder()
                     .success(false)
                     .message("Error occurred while clearing the cart")
@@ -219,10 +219,11 @@ public class CartService implements ICartService {
                         .build();
             }
         } catch (Exception exception) {
-            log.info("Error occurred while processing get cart request with error {} ", exception.getMessage());
+            log.error("Error occurred while processing get cart request with error {} ", exception.getMessage());
             return CartDTOResponse.builder()
                     .response(DefaultResponse.builder()
                             .success(false)
+                            .message("Error occurred while processing get cart request")
                             .httpStatus(Optional.of(HttpStatus.INTERNAL_SERVER_ERROR))
                             .build())
                     .build();
@@ -239,7 +240,7 @@ public class CartService implements ICartService {
             log.info("Successfully processed create cart request for user with id {}", userId);
             return cartRepository.save(cart);
         } catch (Exception exception) {
-            log.info("Error occurred while processing create cart request for user id {}, error {} ", exception.getMessage());
+            log.error("Error occurred while processing create cart request for user id {}, error {} ", userId, exception.getMessage());
         }
         return null;
     }
