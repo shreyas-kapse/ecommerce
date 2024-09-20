@@ -2,6 +2,7 @@ package com.e_commerce.backend;
 
 import com.e_commerce.backend.enity.OrderItem;
 import jakarta.mail.internet.MimeMessage;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
@@ -13,6 +14,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
 
+@Slf4j
 @Service
 public class EmailService {
     private final JavaMailSender javaMailSender;
@@ -24,6 +26,7 @@ public class EmailService {
     @Async
     public void loginMail(String to, String subject, String body, String from, String name) {
         try {
+            log.info("Sending login mail to {}", to);
             MimeMessage message = javaMailSender.createMimeMessage();
 
             message.setRecipients(MimeMessage.RecipientType.TO, to);
@@ -34,14 +37,17 @@ public class EmailService {
 
             message.setContent(htmlContent, "text/html; charset=utf-8");
             javaMailSender.send(message);
+            log.info("Successfully sent mail to {}", to);
         } catch (Exception e) {
             System.out.println("Exception occurred while sending mail.");
+            log.error("Error occurred while sending mail to {} and error {}", to, e.getMessage());
         }
     }
 
     @Async
     public void merchantAccountCreationMail(String to, String subject, String from, String name, String username, String password) {
         try {
+            log.info("Sending login mail to {}", to);
             MimeMessage message = javaMailSender.createMimeMessage();
 
             message.setRecipients(MimeMessage.RecipientType.TO, to);
@@ -53,14 +59,16 @@ public class EmailService {
                     .replace("${password}", password);
             message.setContent(htmlContent, "text/html; charset=utf-8");
             javaMailSender.send(message);
+            log.info("Successfully sent mail to {}", to);
         } catch (Exception e) {
-            System.out.println("Exception occurred while sending mail.");
+            log.error("Error occurred while sending mail to {} and error {}", to, e.getMessage());
         }
     }
 
     @Async
     public void orderConfirmationMail(String to, String subject, String from, String customerName, String orderNumber, String orderDate, List<OrderItem> orderItems, String shippingAddress, String deliveryDate) {
         try {
+            log.info("Sending login mail to {}", to);
             MimeMessage message = javaMailSender.createMimeMessage();
 
             message.setRecipients(MimeMessage.RecipientType.TO, to);
@@ -81,13 +89,14 @@ public class EmailService {
                     .replace("${orderNumber}", orderNumber)
                     .replace("${orderDate}", orderDate)
                     .replace("${orderedItems}", orderedItemsHtml.toString())
-                    .replace("${shippingAddress}",shippingAddress)
-                    .replace("${deliveryDate}",deliveryDate);
+                    .replace("${shippingAddress}", shippingAddress)
+                    .replace("${deliveryDate}", deliveryDate);
 
             message.setContent(htmlContent, "text/html; charset=utf-8");
             javaMailSender.send(message);
+            log.info("Successfully sent mail to {}", to);
         } catch (Exception e) {
-            System.out.println("Exception occurred while sending mail.");
+            log.error("Error occurred while sending mail to {} and error {}", to, e.getMessage());
         }
     }
 
