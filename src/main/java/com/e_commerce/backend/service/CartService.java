@@ -1,5 +1,6 @@
 package com.e_commerce.backend.service;
 
+import com.e_commerce.backend.dtos.CartDTO;
 import com.e_commerce.backend.dtos.CartDTOResponse;
 import com.e_commerce.backend.DefaultResponse;
 import com.e_commerce.backend.Repository.CartItemRepository;
@@ -209,13 +210,19 @@ public class CartService implements ICartService {
                         .build();
             } else {
                 cart = cartEntityOptional.get();
+                CartDTO cartDTO = CartDTO.builder()
+                        .cartId(cart.getId())
+                        .cartItems(cart.getCartItems())
+                        .createdAt(cart.getCreatedAt())
+                        .updatedAt(cart.getUpdatedAt())
+                        .build();
 
                 log.info("Successfully processed get cart request for user with id {}", userIdObject.toString());
                 return CartDTOResponse.builder()
                         .response(DefaultResponse.builder()
                                 .success(true)
                                 .build())
-                        .cart(Optional.of(cart))
+                        .cart(Optional.of(cartDTO))
                         .build();
             }
         } catch (Exception exception) {

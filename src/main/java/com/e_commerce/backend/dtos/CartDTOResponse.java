@@ -17,5 +17,5 @@ import java.util.Optional;
 @JsonInclude(JsonInclude.Include.NON_EMPTY)
 public class CartDTOResponse {
     private DefaultResponse response;
-    private Optional<CartEntity> cart;
+    private Optional<CartDTO> cart;
 }
