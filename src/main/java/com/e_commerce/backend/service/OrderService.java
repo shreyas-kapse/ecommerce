@@ -101,7 +101,8 @@ public class OrderService implements IOrderService {
                 order.setAddressLine2(userEntity.getAddressLine2());
                 order.setPhoneNumber(userEntity.getPhoneNumber());
                 order.setCity(userEntity.getCity());
-                order.setStatus(userEntity.getState());
+                order.setState(userEntity.getState());
+                order.setStatus("PLACED");
                 order.setPostalCode(userEntity.getPostalCode());
                 order.setCountry(userEntity.getCountry());
 
