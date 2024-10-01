@@ -1,6 +1,7 @@
 package com.e_commerce.backend.controller;
 
 import com.e_commerce.backend.DefaultResponse;
+import com.e_commerce.backend.dtos.AllMerchantOrdersDTO;
 import com.e_commerce.backend.dtos.MerchantDTO;
 import com.e_commerce.backend.enity.MerchantEntity;
 import com.e_commerce.backend.service.IMerchantService;
@@ -9,17 +10,16 @@ import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
+import java.util.stream.Stream;
 
 @Slf4j
 @Tag(name = "Merchant", description = "Operations related to the Merchant")
@@ -66,5 +66,35 @@ public class MerchantController {
     @Operation(summary = "Testing endpoint")
     public String test() {
         return "Controller";
+    }
+
+    @GetMapping("/orders/all")
+    @Operation(summary = "Get all orders of merchants")
+    public ResponseEntity<AllMerchantOrdersDTO> getAllOrdersOfMerchant(@RequestHeader("Authorization") String authorizationHeader) {
+        String token;
+
+        token = Stream.of(authorizationHeader)
+                .filter(Objects::nonNull)
+                .filter(x -> x.startsWith("Bearer "))
+                .map(x -> x.substring(7))
+                .findFirst()
+                .orElse("");
+
+        DefaultResponse response;
+        if (token.isEmpty()) {
+            response = DefaultResponse.builder()
+                    .success(false)
+                    .message("Error in session please login")
+                    .build();
+            return ResponseEntity.badRequest().body(AllMerchantOrdersDTO.builder()
+                    .response(response)
+                    .build());
+        }
+
+        log.info("Processing get all orders of merchant");
+        AllMerchantOrdersDTO allMerchantOrdersDTO = merchantService.getAllOrders(token);
+        return allMerchantOrdersDTO.getResponse().isSuccess() ?
+                ResponseEntity.ok(allMerchantOrdersDTO) :
+                ResponseEntity.status(allMerchantOrdersDTO.getResponse().getHttpStatus().get()).body(allMerchantOrdersDTO);
     }
 }

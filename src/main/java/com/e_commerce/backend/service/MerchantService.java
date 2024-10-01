@@ -6,6 +6,8 @@ import com.e_commerce.backend.EmailService;
 import com.e_commerce.backend.Repository.MerchantRepository;
 import com.e_commerce.backend.Repository.UserRepository;
 import com.e_commerce.backend.Role;
+import com.e_commerce.backend.dtos.AllMerchantOrdersDTO;
+import com.e_commerce.backend.dtos.AllOrdersOfMerchant;
 import com.e_commerce.backend.dtos.MerchantDTO;
 import com.e_commerce.backend.enity.MerchantEntity;
 import com.e_commerce.backend.enity.UserEntity;
@@ -16,6 +18,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 @Slf4j
@@ -33,6 +36,9 @@ public class MerchantService implements IMerchantService {
 
     @Autowired
     private EmailService emailService;
+
+    @Autowired
+    private JwtService jwtService;
 
     @Override
     public DefaultResponse addMerchant(MerchantEntity merchant) {
@@ -128,4 +134,41 @@ public class MerchantService implements IMerchantService {
                     .build();
         }
     }
+
+
+    @Override
+    public AllMerchantOrdersDTO getAllOrders(String token) {
+        try {
+            Object merchantId = jwtService.extractId(token);
+            if (merchantId == null) {
+                return AllMerchantOrdersDTO.builder()
+                        .response(DefaultResponse.builder()
+                                .success(false)
+                                .message("No merchant found")
+                                .httpStatus(Optional.of(HttpStatus.NO_CONTENT))
+                                .build())
+                        .build();
+            }
+            log.info("Processing get all orders of merchant with id {} ", merchantId.toString());
+            List<AllOrdersOfMerchant> allOrdersOfMerchants = merchantRepository.findAllByMerchantId(Long.parseLong(merchantId.toString())).get();
+            log.info("Successfully processed get all orders of merchant request with merchant id {}", merchantId);
+
+            return AllMerchantOrdersDTO.builder()
+                    .response(DefaultResponse.builder()
+                            .success(true)
+                            .build())
+                    .allOrders(Optional.of(allOrdersOfMerchants))
+                    .build();
+        } catch (Exception exception) {
+            log.error("Error occurred while processing get all orders of merchant request with error {} ", exception.getMessage());
+            return AllMerchantOrdersDTO.builder()
+                    .response(DefaultResponse.builder()
+                            .success(false)
+                            .httpStatus(Optional.of(HttpStatus.INTERNAL_SERVER_ERROR))
+                            .build())
+                    .build();
+        }
+    }
+
+
 }
